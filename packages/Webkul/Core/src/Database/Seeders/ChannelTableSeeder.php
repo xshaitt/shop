@@ -27,11 +27,16 @@ class ChannelTableSeeder extends Seeder
                 'channel_id' => 1,
                 'currency_id' => 1,
             ]);
-        
+
         DB::table('channel_locales')->insert([
-                'channel_id' => 1,
-                'locale_id' => 1,
-            ]);
+            'channel_id' => 1,
+            'locale_id' => 1,
+        ]);
+
+        DB::table('channel_locales')->insert([
+            'channel_id' => 1,
+            'locale_id' => 2,
+        ]);
 
         DB::table('channel_inventory_sources')->insert([
                 'channel_id' => 1,
