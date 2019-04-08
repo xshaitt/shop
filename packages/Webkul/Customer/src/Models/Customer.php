@@ -16,14 +16,15 @@ class Customer extends Authenticatable implements CustomerContract
 
     protected $table = 'customers';
 
-    protected $fillable = ['first_name', 'channel_id', 'last_name', 'gender', 'date_of_birth', 'email', 'password', 'customer_group_id', 'subscribed_to_news_letter', 'is_verified', 'token'];
+    protected $fillable = ['first_name', 'channel_id', 'last_name','gender', 'date_of_birth', 'email', 'password', 'customer_group_id', 'subscribed_to_news_letter', 'is_verified', 'token', 'uuid'];
 
     protected $hidden = ['password', 'remember_token'];
 
     /**
      * Get the customer full name.
      */
-    public function getNameAttribute() {
+    public function getNameAttribute()
+    {
         return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
     }
 
@@ -36,11 +37,11 @@ class Customer extends Authenticatable implements CustomerContract
     }
 
     /**
-    * Send the password reset notification.
-    *
-    * @param  string  $token
-    * @return void
-    */
+     * Send the password reset notification.
+     *
+     * @param  string $token
+     * @return void
+     */
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new CustomerResetPassword($token));
@@ -65,35 +66,40 @@ class Customer extends Authenticatable implements CustomerContract
     /**
      * Customer's relation with wishlist items
      */
-    public function wishlist_items() {
+    public function wishlist_items()
+    {
         return $this->hasMany(WishlistProxy::modelClass(), 'customer_id');
     }
 
     /**
      * get all cart inactive cart instance of a customer
      */
-    public function all_carts() {
+    public function all_carts()
+    {
         return $this->hasMany(CartProxy::modelClass(), 'customer_id');
     }
 
     /**
      * get inactive cart inactive cart instance of a customer
      */
-    public function inactive_carts() {
+    public function inactive_carts()
+    {
         return $this->hasMany(CartProxy::modelClass(), 'customer_id')->where('is_active', 0);
     }
 
     /**
      * get active cart inactive cart instance of a customer
      */
-    public function active_carts() {
+    public function active_carts()
+    {
         return $this->hasMany(CartProxy::modelClass(), 'customer_id')->where('is_active', 1);
     }
 
     /**
      * get all reviews of a customer
-    */
-    public function all_reviews() {
+     */
+    public function all_reviews()
+    {
         return $this->hasMany(ProductReviewProxy::modelClass(), 'customer_id');
     }
 }

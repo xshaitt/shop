@@ -12,3 +12,9 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('xsh', function () {
+    dd(1);
+});
+
+Route::post('/user/register', 'Api\UserController@createUser');
