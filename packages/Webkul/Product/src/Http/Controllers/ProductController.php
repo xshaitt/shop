@@ -69,10 +69,10 @@ class ProductController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  Webkul\Attribute\Repositories\AttributeFamilyRepository  $attributeFamily
-     * @param  Webkul\Category\Repositories\CategoryRepository          $category
-     * @param  Webkul\Inventory\Repositories\InventorySourceRepository  $inventorySource
-     * @param  Webkul\Product\Repositories\ProductRepository            $product
+     * @param  Webkul\Attribute\Repositories\AttributeFamilyRepository $attributeFamily
+     * @param  Webkul\Category\Repositories\CategoryRepository $category
+     * @param  Webkul\Inventory\Repositories\InventorySourceRepository $inventorySource
+     * @param  Webkul\Product\Repositories\ProductRepository $product
      * @return void
      */
     public function __construct(
@@ -140,7 +140,7 @@ class ProductController extends Controller
             return redirect(url()->current() . '?family=' . request()->input('attribute_family_id') . '&sku=' . request()->input('sku'));
         }
 
-        if (request()->input('type') == 'configurable' && (! request()->has('super_attributes') || ! count(request()->get('super_attributes')))) {
+        if (request()->input('type') == 'configurable' && (!request()->has('super_attributes') || !count(request()->get('super_attributes')))) {
             session()->flash('error', trans('admin::app.catalog.products.configurable-error'));
 
             return back();
@@ -152,7 +152,9 @@ class ProductController extends Controller
             'sku' => ['required', 'unique:products,sku', new \Webkul\Core\Contracts\Validations\Slug]
         ]);
 
-        $product = $this->product->create(request()->all());
+        $data = request()->all();
+        $data['seller_id'] = auth()->guard('admin')->user()->id;
+        $product = $this->product->create($data);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Product']));
 
@@ -162,7 +164,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -182,7 +184,7 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Webkul\Product\Http\Requests\ProductForm $request
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(ProductForm $request, $id)
@@ -197,7 +199,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -281,10 +283,10 @@ class ProductController extends Controller
 
             foreach ($this->product->searchProductByAttribute(request()->input('query')) as $row) {
                 $results[] = [
-                        'id' => $row->product_id,
-                        'sku' => $row->sku,
-                        'name' => $row->name,
-                    ];
+                    'id' => $row->product_id,
+                    'sku' => $row->sku,
+                    'name' => $row->name,
+                ];
             }
 
             return response()->json($results);

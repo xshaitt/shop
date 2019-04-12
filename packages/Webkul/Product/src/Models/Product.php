@@ -11,7 +11,7 @@ use Webkul\Product\Contracts\Product as ProductContract;
 
 class Product extends Model implements ProductContract
 {
-    protected $fillable = ['type', 'attribute_family_id', 'sku', 'parent_id'];
+    protected $fillable = ['type', 'attribute_family_id', 'sku', 'parent_id', 'seller_id'];
 
     protected $with = ['attribute_family', 'inventories'];
 
@@ -146,7 +146,7 @@ class Product extends Model implements ProductContract
      */
     public function isSaleable()
     {
-        if (! $this->status)
+        if (!$this->status)
             return false;
 
         if ($this->haveSufficientQuantity(1))
@@ -163,8 +163,8 @@ class Product extends Model implements ProductContract
     public function inventory_source_qty($inventorySourceId)
     {
         return $this->inventories()
-                ->where('inventory_source_id', $inventorySourceId)
-                ->sum('qty');
+            ->where('inventory_source_id', $inventorySourceId)
+            ->sum('qty');
     }
 
     /**
@@ -177,9 +177,9 @@ class Product extends Model implements ProductContract
         $total = 0;
 
         $channelInventorySourceIds = core()->getCurrentChannel()
-                ->inventory_sources()
-                ->where('status', 1)
-                ->pluck('id');
+            ->inventory_sources()
+            ->where('status', 1)
+            ->pluck('id');
 
         foreach ($this->inventories as $inventory) {
             if (is_numeric($index = $channelInventorySourceIds->search($inventory->inventory_source_id))) {
@@ -188,8 +188,8 @@ class Product extends Model implements ProductContract
         }
 
         $orderedInventory = $this->ordered_inventories()
-                ->where('channel_id', core()->getCurrentChannel()->id)
-                ->first();
+            ->where('channel_id', core()->getCurrentChannel()->id)
+            ->first();
 
         if ($orderedInventory) {
             $total -= $orderedInventory->qty;
@@ -201,12 +201,12 @@ class Product extends Model implements ProductContract
     /**
      * Get an attribute from the model.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return mixed
      */
     public function getAttribute($key)
     {
-        if (! method_exists(self::class, $key) && !in_array($key, ['parent_id', 'attribute_family_id']) && !isset($this->attributes[$key])) {
+        if (!method_exists(self::class, $key) && !in_array($key, ['parent_id', 'attribute_family_id']) && !isset($this->attributes[$key])) {
             if (isset($this->id)) {
                 $this->attributes[$key] = '';
 
@@ -250,7 +250,7 @@ class Product extends Model implements ProductContract
      */
     public function getCustomAttributeValue($attribute)
     {
-        if (! $attribute)
+        if (!$attribute)
             return;
 
         $channel = request()->get('channel') ?: (core()->getCurrentChannelCode() ?: core()->getDefaultChannelCode());
@@ -277,7 +277,7 @@ class Product extends Model implements ProductContract
     /**
      * Overrides the default Eloquent query builder
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function newEloquentBuilder($query)
