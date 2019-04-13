@@ -7,7 +7,7 @@ use Webkul\Sales\Contracts\Order as OrderContract;
 
 class Order extends Model implements OrderContract
 {
-    protected $guarded = ['id', 'items', 'shipping_address', 'billing_address', 'customer', 'channel', 'payment', 'created_at', 'updated_at'];
+    protected $guarded = ['id', 'items', 'shipping_address', 'billing_address', 'customer', 'channel', 'payment', 'created_at', 'updated_at', 'seller_id'];
 
     protected $statusLabel = [
         'pending' => 'Pending',
@@ -74,7 +74,7 @@ class Order extends Model implements OrderContract
     {
         return $this->hasMany(InvoiceProxy::modelClass());
     }
-    
+
     /**
      * Get the customer record associated with the order.
      */
@@ -163,13 +163,13 @@ class Order extends Model implements OrderContract
     {
         if ($this->status == 'fraud')
             return false;
-            
+
         foreach ($this->items as $item) {
             if ($item->qty_to_invoice > 0) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -180,7 +180,7 @@ class Order extends Model implements OrderContract
     {
         if ($this->status == 'fraud')
             return false;
-            
+
         foreach ($this->items as $item) {
             if ($item->qty_to_cancel > 0) {
                 return true;
