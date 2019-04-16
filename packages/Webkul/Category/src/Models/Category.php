@@ -13,14 +13,14 @@ class Category extends TranslatableModel implements CategoryContract
 
     public $translatedAttributes = ['name', 'description', 'slug', 'meta_title', 'meta_description', 'meta_keywords'];
 
-    protected $fillable = ['position', 'status', 'display_mode', 'parent_id'];
+    protected $fillable = ['position', 'status', 'display_mode', 'parent_id', 'seller_id'];
 
     /**
      * Get image url for the category image.
      */
     public function image_url()
     {
-        if (! $this->image)
+        if (!$this->image)
             return;
 
         return Storage::url($this->image);

@@ -207,4 +207,12 @@ class CategoryRepository extends Repository
             $category->save();
         }
     }
+
+
+    public function getAdminCategoryTree($id = null)
+    {
+        return $id
+            ? Category::orderBy('position', 'ASC')->where('id', '!=', $id)->get()->toTree()
+            : Category::orderBy('position', 'ASC')->get()->toTree();
+    }
 }

@@ -33,7 +33,7 @@ class CategoryController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  Webkul\Category\Repositories\CategoryRepository  $category
+     * @param  Webkul\Category\Repositories\CategoryRepository $category
      * @return void
      */
     public function __construct(Category $category)
@@ -83,14 +83,15 @@ class CategoryController extends Controller
 
             $result = $categoryTransalation->where('name', request()->input('name'))->get();
 
-            if(count($result) > 0) {
+            if (count($result) > 0) {
                 session()->flash('error', trans('admin::app.response.create-root-failure'));
 
                 return redirect()->back();
             }
         }
-
-        $category = $this->category->create(request()->all());
+        $data = request()->all();
+        $data['seller_id'] = auth()->guard('admin')->user()->id;
+        $category = $this->category->create($data);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Category']));
 
@@ -100,7 +101,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -116,7 +117,7 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -125,7 +126,7 @@ class CategoryController extends Controller
 
         $this->validate(request(), [
             $locale . '.slug' => ['required', new \Webkul\Core\Contracts\Validations\Slug, function ($attribute, $value, $fail) use ($id) {
-                if (! $this->category->isSlugUnique($id, $value)) {
+                if (!$this->category->isSlugUnique($id, $value)) {
                     $fail(trans('admin::app.response.already-taken', ['name' => 'Category']));
                 }
             }],
@@ -143,14 +144,14 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         Event::fire('catalog.category.delete.before', $id);
 
-        if(strtolower($this->category->find($id)->name) == "root") {
+        if (strtolower($this->category->find($id)->name) == "root") {
             session()->flash('warning', trans('admin::app.response.delete-category-root', ['name' => 'Category']));
         } else {
             session()->flash('success', trans('admin::app.response.delete-success', ['name' => 'Category']));
@@ -168,7 +169,8 @@ class CategoryController extends Controller
      *
      * @return response \Illuminate\Http\Response
      */
-    public function massDestroy() {
+    public function massDestroy()
+    {
         $suppressFlash = false;
 
         if (request()->isMethod('delete') || request()->isMethod('post')) {
@@ -181,14 +183,14 @@ class CategoryController extends Controller
                     $this->category->delete($value);
 
                     Event::fire('catalog.category.delete.after', $value);
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     $suppressFlash = true;
 
                     continue;
                 }
             }
 
-            if (! $suppressFlash)
+            if (!$suppressFlash)
                 session()->flash('success', trans('admin::app.datagrid.mass-ops.delete-success'));
             else
                 session()->flash('info', trans('admin::app.datagrid.mass-ops.partial-action', ['resource' => 'Attribute Family']));

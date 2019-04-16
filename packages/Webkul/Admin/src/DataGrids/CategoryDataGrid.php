@@ -20,14 +20,15 @@ class CategoryDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('categories as cat')
-                ->select('cat.id as category_id', 'ct.name', 'cat.position', 'cat.status', 'ct.locale',
+            ->select('cat.id as category_id', 'ct.name', 'cat.position', 'cat.status', 'ct.locale',
                 DB::raw('COUNT(DISTINCT pc.product_id) as count'))
-                ->leftJoin('category_translations as ct', function($leftJoin) {
-                    $leftJoin->on('cat.id', '=', 'ct.category_id')
-                        ->where('ct.locale', app()->getLocale());
-                })
-                ->leftJoin('product_categories as pc', 'cat.id', '=', 'pc.category_id')
-                ->groupBy('cat.id');
+            ->leftJoin('category_translations as ct', function ($leftJoin) {
+                $leftJoin->on('cat.id', '=', 'ct.category_id')
+                    ->where('ct.locale', app()->getLocale());
+            })
+            ->where('seller_id', auth()->guard('admin')->user()->id)
+            ->leftJoin('product_categories as pc', 'cat.id', '=', 'pc.category_id')
+            ->groupBy('cat.id');
 
 
         $this->addFilter('category_id', 'cat.id');
@@ -71,7 +72,7 @@ class CategoryDataGrid extends DataGrid
             'sortable' => true,
             'searchable' => true,
             'filterable' => true,
-            'wrapper' => function($value) {
+            'wrapper' => function ($value) {
                 if ($value->status == 1)
                     return 'Active';
                 else
@@ -89,7 +90,8 @@ class CategoryDataGrid extends DataGrid
         ]);
     }
 
-    public function prepareActions() {
+    public function prepareActions()
+    {
         $this->addAction([
             'type' => 'Edit',
             'route' => 'admin.catalog.categories.edit',
