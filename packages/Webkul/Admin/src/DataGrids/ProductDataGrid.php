@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids;
 
+use App\Models\Sellers;
 use Webkul\Ui\DataGrid\DataGrid;
 use DB;
 
@@ -19,12 +20,16 @@ class ProductDataGrid extends DataGrid
 
     protected $itemsPerPage = 20;
 
+    //只查询自己店铺下的产品
     public function prepareQueryBuilder()
     {
+        $seller = Sellers::where('admin_id', auth()->guard('admin')->user()->id)->first();
+        $sellerId = $seller ? $seller->id : 0;
         $queryBuilder = DB::table('products_grid')
-                ->leftJoin('products', 'products_grid.product_id', '=', 'products.id')
-                ->leftJoin('attribute_families', 'products.attribute_family_id', '=', 'attribute_families.id')
-                ->select('products_grid.product_id as product_id', 'products_grid.sku as product_sku', 'products_grid.name as productname', 'products.type as product_type', 'products_grid.status', 'products_grid.price', 'products_grid.quantity', 'attribute_families.name as attribute_family');
+            ->leftJoin('products', 'products_grid.product_id', '=', 'products.id')
+            ->leftJoin('attribute_families', 'products.attribute_family_id', '=', 'attribute_families.id')
+            ->where('products.seller_id', $sellerId)
+            ->select('products_grid.product_id as product_id', 'products_grid.sku as product_sku', 'products_grid.name as productname', 'products.type as product_type', 'products_grid.status', 'products_grid.price', 'products_grid.quantity', 'attribute_families.name as attribute_family');
 
         $this->addFilter('product_id', 'products_grid.product_id');
         $this->addFilter('productname', 'products_grid.name');
@@ -90,7 +95,7 @@ class ProductDataGrid extends DataGrid
             'sortable' => true,
             'searchable' => false,
             'filterable' => true,
-            'wrapper' => function($value) {
+            'wrapper' => function ($value) {
                 if ($value->status == 1)
                     return 'Active';
                 else
@@ -117,7 +122,8 @@ class ProductDataGrid extends DataGrid
         ]);
     }
 
-    public function prepareActions() {
+    public function prepareActions()
+    {
         $this->addAction([
             'type' => 'Edit',
             'route' => 'admin.catalog.products.edit',
@@ -134,7 +140,8 @@ class ProductDataGrid extends DataGrid
         $this->enableAction = true;
     }
 
-    public function prepareMassActions() {
+    public function prepareMassActions()
+    {
         $this->addMassAction([
             'type' => 'delete',
             'label' => 'Delete',

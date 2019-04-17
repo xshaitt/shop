@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Http\Controllers;
 
+use App\Models\Sellers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
@@ -153,7 +154,10 @@ class ProductController extends Controller
         ]);
 
         $data = request()->all();
-        $data['seller_id'] = auth()->guard('admin')->user()->id;
+        $seller = Sellers::where('admin_id', auth()->guard('admin')->user()->id)->first();
+        if ($seller) {
+            $data['seller_id'] = $seller->id;
+        }
         $product = $this->product->create($data);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Product']));
