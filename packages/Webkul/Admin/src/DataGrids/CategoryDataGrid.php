@@ -29,10 +29,7 @@ class CategoryDataGrid extends DataGrid
             ->where('seller_id', auth()->guard('admin')->user()->id)
             ->leftJoin('product_categories as pc', 'cat.id', '=', 'pc.category_id')
             ->groupBy('cat.id');
-
-
         $this->addFilter('category_id', 'cat.id');
-
         $this->setQueryBuilder($queryBuilder);
     }
 
@@ -74,9 +71,9 @@ class CategoryDataGrid extends DataGrid
             'filterable' => true,
             'wrapper' => function ($value) {
                 if ($value->status == 1)
-                    return 'Active';
+                    return '激活';
                 else
-                    return 'Inactive';
+                    return '未激活';
             }
         ]);
 

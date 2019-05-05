@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('type');
             $table->timestamps();
             $table->integer('parent_id')->unsigned()->nullable();
-            $table->integer('attribute_family_id')->unsigned()->nullable();
+            $table->integer('attribute_family_id')->unsigned()->nullable()->comment('属性族id');
             $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->onDelete('restrict');
         });
 
