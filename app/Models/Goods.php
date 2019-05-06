@@ -50,27 +50,102 @@ class Goods extends Model
         return ['page'=>$page,'page_size'=>$page_size,'total_page_sizes'=>$total_page_sizes,'result'=>$result];
     }
 
-
+    /**
+     * 获取商品详情
+     *
+     * @author 邹柯
+     * @param $product_id
+     * @return Model|\Illuminate\Database\Query\Builder|object|null
+     */
     public static function getGoodsDetail($product_id){
         //获取商品详情
         $result = Db::table('products_grid as pg')->addSelect(['pg.name','quantity','price'])
-            ->leftJoin('products_flat as pf','pg.product_id','=','pf.product_id')
+            ->leftJoin('product_flat as pf','pg.product_id','=','pf.product_id')
             ->where([
                 ['pg.status','=',1],
-            ])->where('product_id','=',$product_id)->first();
+            ])->where('pg.product_id','=',$product_id)->first();
 
         return $result;
     }
 
-    public static function getGoodsAttribute($product_id,$locale = 'zh-cn'){
-        $result = Db::table('products_grid as pg')->addSelect(['pg.name','pf.price','price'])
-            ->leftJoin('products_flat as pf','pg.product_id','=','pf.product_id')
+    /**
+     * 获取商品sku属性
+     *
+     * @author 邹柯
+     * @param $product_id int 是 商品id
+     * @param $locale string 是 本地化
+     * @return mixed
+     */
+    public static function getGoodsSkuAttribute($product_id,$product_attribute_id = null,$locale = 'zh-cn'){
+        //本地化商品id
+        $locate_product_id = self::getGoodsLocaleSkuId($product_id,$locale);
+
+        $result = Db::table('product_flat')->addSelect(['id as product_attribute_id','name as goods_name',DB::raw('concat_ws(" ",concat("颜色:",color_label),concat("尺码:",size_label)) as attributes'),'price'])
             ->where([
-                ['pg.status','=',1],
-                ['pg.locale','=',$locale],
-            ])->where('product_id','=',$product_id)->get();
+                ['parent_id','=',$locate_product_id],
+            ])->get();
+
+        if(!empty($result)){
+            $result = object_to_array($result);
+            //获取商品id
+            $product_id = self::getGoodsSkuId($locate_product_id);
+            foreach($result as $k=>$v){
+                if($product_attribute_id == $v['product_attribute_id']){
+                    $result[$k]['is_selected'] = 1;
+                }else{
+                    $result[$k]['is_selected'] = 0;
+                }
+                $result[$k]['product_id'] = $product_id;
+            }
+
+        }
 
         return $result;
+    }
+
+    /**
+     * 获取本地化商品id
+     *
+     * @author 邹柯
+     * @param $product_id int 是 商品id
+     * @param $locale string 是 本地化
+     * @return mixed
+     */
+    private static function getGoodsLocaleSkuId($product_id,$locale = 'zh-cn'){
+        $result = Db::table('product_flat')
+            ->where([
+                ['product_id','=',$product_id],
+                ['locale','=',$locale],
+                ['parent_id','=',null]
+            ])->value('id');
+
+        return $result;
+    }
+
+    /**
+     * 获取商品id
+     *
+     * @author 邹柯
+     * @param $locate_product_id int 是 本地化商品id
+     * @param $locale string 是 本地化
+     * @return mixed
+     */
+    private static function getGoodsSkuId($locate_product_id){
+        $result = Db::table('product_flat')
+            ->where([
+                ['id','=',$locate_product_id]
+            ])->value('product_id');
+
+        return $result;
+    }
+
+    /**
+     * 根据商品id获取商品状态
+     *
+     * @param $product_id
+     */
+    public static function getGoodsStatusByProductId($product_id){
+
     }
 
 

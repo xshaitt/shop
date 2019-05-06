@@ -106,9 +106,12 @@ class GoodsController extends Controller
         $messages = [
             'product_id.required'  => 'product_id不能为空',
             'product_id.numeric'   => 'product_id必须是整形!',
+            'product_attribute_id.required'  => 'product_attribute_id不能为空',
+            'product_attribute_id.numeric'   => 'product_attribute_id必须是整形!',
         ];
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|numeric',
+            'product_attribute_id' => 'required|numeric',
         ],$messages);
         if ($validator->fails()) {
             return ApiService::error(40000,$validator->errors()->first());
@@ -117,8 +120,8 @@ class GoodsController extends Controller
         //获取接收参数
         $data = $request->input();
         $product_id = $data['product_id'];
-
-
+        $product_attribute_id = $data['product_attribute_id'];
+        $result = Goods::getGoodsSkuAttribute($product_id,$product_attribute_id);
 
         return ApiService::success($result);
     }
