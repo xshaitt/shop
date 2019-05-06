@@ -3,12 +3,12 @@
 return [
     [
         'key' => 'simple',
-        'name' => 'Simple',
+        'name' => '简单',
         'sort' => 1
 
     ], [
         'key' => 'configurable',
-        'name' => 'Configurable',
+        'name' => '复杂',
         'sort' => 2
     ]
 ];

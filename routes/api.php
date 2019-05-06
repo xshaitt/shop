@@ -18,4 +18,5 @@ Route::get('xsh', function () {
 });
 
 Route::post('/user/register', 'Api\UserController@createUser');
+Route::get('/goods/list', 'Api\GoodsController@goodsList');
 Route::get('/goods/detail', 'Api\GoodsController@goodsDetail');

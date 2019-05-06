@@ -241,7 +241,7 @@ return [
                     'invoices' => '发票',
                     'shipments' => '出货量',
                     'SKU' => '最小存货单位',
-                    'product-name' => '名字',
+                    'product-name' => '商品名称',
                     'qty' => '数量',
                     'item-status' => '项目状态',
                     'item-ordered' => '订购 (:qty_ordered)',
