@@ -1,0 +1,132 @@
+body {
+    background: #F3F3F3;
+}
+
+.content-box div {
+    width: 100%;
+}
+
+#out-put-view {
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    margin-top: 60px;
+}
+
+#out-put-view #api_iframe {
+    width: 60%;
+    background-color: #FFFFFE;
+    border-radius: 5px;
+    /*overflow:scroll;*/
+}
+
+.d-right {
+    margin-left: 5%;
+    width: 10%;
+}
+
+.d-left, .d-right {
+    float: left;
+    min-height: 720px;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+.d-left {
+    width: 60%;
+}
+
+.d-right {
+    margin-left: 5%;
+    width: 35%;
+}
+
+.request-box {
+    width: 100%;
+    padding: 0 20px;
+}
+
+.content-box {
+    height: 200px;
+}
+
+.form-request {
+    height: 75px;
+    margin-top: 5px;
+}
+
+.form-request > div {
+    float: left;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    width: 35%;
+}
+
+.form-request > .request-btn {
+    width: 20%;
+}
+.form-request > div label {
+    font-size: 16px;
+    width: 30%;
+}
+
+.form-request > div select, .form-request > div input {
+    width: 70%;
+    height: 30px;
+}
+
+.form-request > div input {
+    width: 50%;
+    max-width: 70px;
+}
+
+.form-request > div input + input {
+    margin-left: 1%;
+}
+
+#explan {
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 80%;
+}
+
+.form-box-content {
+    margin-left: 20px;
+    min-height: 420px;
+}
+
+#form-box {
+    width: 100%;
+    min-height: 720px;
+    height: 100%;
+}
+
+#p-box {
+    width: 90%;
+    text-align: center;
+}
+
+#p-box tr td{
+    height: 50px;
+   /* border: 1px solid #ccc;*/
+}
+#p-box tr td:nth-child(1)
+{
+    width: 10%;
+    text-align: left;
+}
+#p-box tr td:nth-child(2)
+{
+    width: 70%;
+    text-align: center;
+}
+
+#p-box tr td:nth-child(3)
+{
+    width: 10%;
+}
+#p-box input {
+    width: 90%;
+    height: 40px;
+}

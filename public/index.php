@@ -1,5 +1,4 @@
 <?php
-
 $install = require __DIR__.'/installer/install.php';
 
 if (!is_null($install)) {

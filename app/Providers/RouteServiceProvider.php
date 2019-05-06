@@ -39,7 +39,9 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+
+        //自己注册的路由文件
+        $this->mapApiDocRoutes();
     }
 
     /**
@@ -69,5 +71,19 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "apidoc" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+    protected function mapApiDocRoutes()
+    {
+        Route::prefix('apidoc')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/apidoc.php'));
     }
 }

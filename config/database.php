@@ -53,6 +53,20 @@ return [
             'strict' => false,
             'engine' => 'InnoDB ROW_FORMAT=DYNAMIC',
         ],
+        'mindoc'=>[
+            // 数据库类型
+            'driver'            => 'mysql',
+            // 服务器地址
+            'host'        => '39.105.144.59',
+            // 数据库名
+            'database'        => 'mindoc',
+            // 用户名
+            'username'        => 'mindoc',
+            // 密码
+            'password'        => 'T4p@MR%z@TJd',
+            // 端口
+            'port'        => '3306',
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
