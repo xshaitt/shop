@@ -16,18 +16,18 @@ class ApiService
      * @param mixed $msg 消息内容
      * @param array $data 返回数据
      * @param boolean $convert 数据类型是否强转
-     * @param int $code 返回代码
+     * @param int $errCode 返回代码
      * @return array
      */
-    public static function success($code = 0, $data = [], $convert = true)
+    public static function success($data = [],$errCode = 200, $convert = true)
     {
         if ($convert) {
             $data = is_string($data) ? $data : (empty($data) ? null : $data);
         }
-        $result = ['code' => $code, 'msg' => '成功', 'data' => $data];
-        $return = json_encode($result, JSON_UNESCAPED_UNICODE);
+        $result = ['code' =>0,'errCode'=>$errCode, 'message' => '加载成功', 'data' => $data];
+        //$return = json_encode($result, JSON_UNESCAPED_UNICODE);
         //self::addAccessLog($return);
-        return $return;
+        return $result;
     }
 
     /**
@@ -35,22 +35,24 @@ class ApiService
      * @param mixed $msg 消息内容
      * @param array $data 返回数据
      * @param boolean $convert 数据类型是否强转
-     * @param int $code 返回代码
+     * @param int $errCode 返回代码
      * @return array
      */
-    public static function error($code, $data = [], $convert = true)
+    public static function error($errCode, $data = [], $convert = true)
     {
         if ($convert) {
             $data = is_string($data) ? $data : (empty($data) ? null : $data);
         }
-        if (!empty(config("code.{$code}"))) {
-            $result = ['code' => $code, 'msg' => '失败', 'data' => $data];
+
+        if (!empty(config("code.code.zh_cn.{$errCode}"))) {
+            $result = ['code' => -1, 'errCode'=>$errCode,'message' => config("code.code.zh_cn.{$errCode}"), 'data' => $data];
         } else {
-            $result = ['code' => '40000', 'msg' => '失败', 'data' => $data];
+            $errCode = 40000;
+            $result = ['code' => -1, 'errCode'=>$errCode,'message' => config("code.code.zh_cn.{$errCode}"), 'data' => $data];
         }
-        $return = json_encode($result, JSON_UNESCAPED_UNICODE);
-//        self::addAccessLog($return);
-        return $return;
+        //$return = json_encode($result, JSON_UNESCAPED_UNICODE);
+        //self::addAccessLog($return);
+        return $result;
     }
 
 

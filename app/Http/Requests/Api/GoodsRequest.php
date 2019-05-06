@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GoodRequest extends FormRequest
+class GoodsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,4 +27,13 @@ class GoodRequest extends FormRequest
             'id' => 'required|numeric',
         ];
     }
+
+
+    public function messages(){
+        return [
+            'seller_id.required'      =>'seller_id必须填写',
+            'seller_id.numeric'      =>'seller_id必须是整形!',
+        ];
+    }
+
 }
