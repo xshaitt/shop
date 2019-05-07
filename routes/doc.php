@@ -12,16 +12,12 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('xsh', function () {
-    dd(1);
-});
 
-
-Route::get('documents', 'Doc\DocController@documents');
-Route::get('dbStructDocuments', 'Doc\DocController@dbStructDocuments');
-Route::get('generateTableStruct', 'Doc\DocController@generateTableStruct');
-Route::get('apiDevDocuments', 'Doc\DocController@apiDevDocuments');
-Route::get('apiPublicDocuments', 'Doc\DocController@apiPublicDocuments');
-Route::get('apiDebug', 'Doc\DocController@apiDebug');
-Route::get('generateApiDocuments', 'Doc\GenerateDocumentsController@generateApiDocuments');
-Route::get('generateDbDocuments', 'Doc\GenerateDocumentsController@generateDbDocuments');
+Route::get('/doc/documents', 'Doc\DocController@documents');
+Route::get('/doc/dbStructDocuments', 'Doc\DocController@dbStructDocuments');
+Route::get('/doc/generateTableStruct', 'Doc\DocController@generateTableStruct');
+Route::get('/doc/apiDevDocuments', 'Doc\DocController@apiDevDocuments');
+Route::get('/doc/apiPublicDocuments', 'Doc\DocController@apiPublicDocuments');
+Route::get('/doc/apiDebug', 'Doc\DocController@apiDebug');
+Route::get('doc/generateApiDocuments', 'Doc\GenerateDocumentsController@generateApiDocuments');
+Route::get('doc/generateDbDocuments', 'Doc\GenerateDocumentsController@generateDbDocuments');

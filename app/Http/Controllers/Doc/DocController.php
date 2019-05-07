@@ -22,7 +22,7 @@ class DocController extends Controller
         $this->db = DB::connection('mindoc');
         //$this->redirect('http://doc.changrentech.com:8181/docs/mindoc');
         $this->request = Request();
-        $this->action = explode("?",explode("/",$this->request->getRequestUri())[2])[0];
+        $this->action = explode("?",explode("/",$this->request->getRequestUri())[3])[0];
         //获取接口文档配置文件
         $this->config = config('documents');
         //项目名称
@@ -93,7 +93,7 @@ class DocController extends Controller
         }else{
             $book_id = 4;
         }
-        return view('apidoc.documents', compact('list','nav','item','book_id'));
+        return view('doc.doc.documents', compact('list','nav','item','book_id'));
 
     }
 
@@ -163,7 +163,7 @@ class DocController extends Controller
             $res_info=array_merge($res_info,$v);
         }
         $api_debug_info = json_encode($res_info,JSON_UNESCAPED_UNICODE);
-        return view('debug',[
+        return view('doc.doc.debug',[
             'list'=>$api_debug_info,
             'nav'=>'apiDebug'
         ]);
