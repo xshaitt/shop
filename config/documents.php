@@ -6,6 +6,7 @@ return [
     'class' => [
         'api' => [
             'App\Http\Controllers\Api\GoodsController',
+            'App\Http\Controllers\Api\AddressController',
         ],
     ],
 ];

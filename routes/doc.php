@@ -19,5 +19,5 @@ Route::get('/doc/generateTableStruct', 'Doc\DocController@generateTableStruct');
 Route::get('/doc/apiDevDocuments', 'Doc\DocController@apiDevDocuments');
 Route::get('/doc/apiPublicDocuments', 'Doc\DocController@apiPublicDocuments');
 Route::get('/doc/apiDebug', 'Doc\DocController@apiDebug');
-Route::get('doc/generateApiDocuments', 'Doc\GenerateDocumentsController@generateApiDocuments');
-Route::get('doc/generateDbDocuments', 'Doc\GenerateDocumentsController@generateDbDocuments');
+Route::get('/doc/generateApiDocuments', 'Doc\GenerateDocumentsController@generateApiDocuments');
+Route::get('/doc/generateDbDocuments', 'Doc\GenerateDocumentsController@generateDbDocuments');
