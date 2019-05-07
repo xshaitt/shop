@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Service\ApiService;
 use App\Models\Goods;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -48,6 +47,7 @@ class GoodsController extends Controller
             'page'      => 'bail|nullable|numeric',
             'page_size' => 'bail|nullable|numeric',
         ],$messages);
+
         if ($validator->fails()) {
             return ApiService::error(40000,$validator->errors()->first());
         }
@@ -97,9 +97,30 @@ class GoodsController extends Controller
     }
 
     /**
-     * 商品详情
-     *
-     * @param id 是 int 商品id
+     * @title 商品详情
+     * @desc  {"0":"接口地址：/goods/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
+     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
+     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
+     * @param {"name":"product_id","type":"int","required":true,"desc":"商品id","level":1}
+     * @param {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":1}
+     * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
+     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":2}
+     * @return {"name":"description","type":"string","required":false,"desc":"商品描述","level":2}
+     * @return {"name":"new","type":"int","required":true,"desc":"是否新品:1是、0否","level":2}
+     * @return {"name":"featured","type":"int","required":true,"desc":"是否特色商品:1是、0否","level":2}
+     * @return {"name":"status","type":"int","required":true,"desc":"是否启用:1是、0否","level":2}
+     * @return {"name":"visible_individually","type":"int","required":true,"desc":"是否可见:1是、0否","level":2}
+     * @return {"name":"image_paths","type":"string","required":false,"desc":"商品轮播图","level":2}
+     * @return {"name":"attributes","type":"dict","required":true,"desc":"商品属性","level":2}
+     * @return {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":3}
+     * @return {"name":"status","type":"int","required":true,"desc":"是否启用:1是、0否","level":3}
+     * @return {"name":"goods_name","type":"string","required":true,"desc":"商品sku名称","level":3}
+     * @return {"name":"attributes","type":"string","required":true,"desc":"商品sku属性","level":3}
+     * @return {"name":"price","type":"string","required":true,"desc":"商品sku价格","level":3}
+     * @return {"name":"is_selected","type":"int","required":true,"desc":"商品sku是否选中:1是、0否","level":3}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"product_id":22,"description":"<p>wwewewe</p>","new":1,"featured":0,"status":1,"visible_individually":0,"image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg,product/22/e39SQ98DKHH0YU1WHTqRuaSWaZH5su871C0hKwWj.jpeg,product/22/YxoVj0YghLu1OrFWiS8aPRwCyqDSan016nuQw6eb.jpeg","attributes":[{"product_attribute_id":46,"status":1,"goods_name":"秋冬棉衣1","attributes":"颜色:Red 尺码:","price":"200.0000","is_selected":1},{"product_attribute_id":48,"status":1,"goods_name":"秋冬棉衣2","attributes":"颜色:Green 尺码:S","price":"100.0000","is_selected":0}]}}
      */
     public function goodsDetail(Request $request){
         //参数校验
@@ -113,6 +134,7 @@ class GoodsController extends Controller
             'product_id' => 'required|numeric',
             'product_attribute_id' => 'required|numeric',
         ],$messages);
+
         if ($validator->fails()) {
             return ApiService::error(40000,$validator->errors()->first());
         }
@@ -121,8 +143,13 @@ class GoodsController extends Controller
         $data = $request->input();
         $product_id = $data['product_id'];
         $product_attribute_id = $data['product_attribute_id'];
-        $result = Goods::getGoodsSkuAttribute($product_id,$product_attribute_id);
 
-        return ApiService::success($result);
+        //获取商品详情
+        $detail = Goods::getGoodsDetail($product_id,'zh-cn');
+
+        //获取商品属性
+        $detail['attributes'] = Goods::getGoodsSkuAttribute($product_id,$product_attribute_id);
+
+        return ApiService::success($detail);
     }
 }

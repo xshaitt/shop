@@ -54,16 +54,32 @@ class Goods extends Model
      * 获取商品详情
      *
      * @author 邹柯
-     * @param $product_id
+     * @param $product_id int 商品id
+     * @param $locale string 是 本地化
      * @return Model|\Illuminate\Database\Query\Builder|object|null
      */
-    public static function getGoodsDetail($product_id){
+    public static function getGoodsDetail($product_id,$locale = 'zh-cn'){
         //获取商品详情
-        $result = Db::table('products_grid as pg')->addSelect(['pg.name','quantity','price'])
-            ->leftJoin('product_flat as pf','pg.product_id','=','pf.product_id')
-            ->where([
-                ['pg.status','=',1],
-            ])->where('pg.product_id','=',$product_id)->first();
+        $result = Db::table('product_flat')->addSelect(['product_id','description','new','featured','status','visible_individually'])->where([
+            ['product_id','=',$product_id],
+            ['locale','=',$locale],
+        ])->first();
+        if(!empty($result)){
+            $result = (array)$result;
+
+            //获取商品图片
+            $product_images = self::getGoodsImageByProductIds([$product_id]);
+            if(!empty($product_images)){
+                foreach($product_images as $k=>$v){
+                    $p_imgs[$v['product_id']] = $v['image_paths'];
+                }
+                $result['image_paths'] = $p_imgs[$v['product_id']];
+            }else{
+                $result['image_paths'] = null;
+            }
+        }else{
+            $result = [];
+        }
 
         return $result;
     }
@@ -80,22 +96,19 @@ class Goods extends Model
         //本地化商品id
         $locate_product_id = self::getGoodsLocaleSkuId($product_id,$locale);
 
-        $result = Db::table('product_flat')->addSelect(['id as product_attribute_id','name as goods_name',DB::raw('concat_ws(" ",concat("颜色:",color_label),concat("尺码:",size_label)) as attributes'),'price'])
+        $result = Db::table('product_flat')->addSelect(['id as product_attribute_id','status','name as goods_name',DB::raw('concat_ws(" ",concat("颜色:",color_label),concat("尺码:",size_label)) as attributes'),'price'])
             ->where([
                 ['parent_id','=',$locate_product_id],
             ])->get();
 
         if(!empty($result)){
             $result = object_to_array($result);
-            //获取商品id
-            $product_id = self::getGoodsSkuId($locate_product_id);
             foreach($result as $k=>$v){
                 if($product_attribute_id == $v['product_attribute_id']){
                     $result[$k]['is_selected'] = 1;
                 }else{
                     $result[$k]['is_selected'] = 0;
                 }
-                $result[$k]['product_id'] = $product_id;
             }
 
         }
@@ -138,16 +151,6 @@ class Goods extends Model
 
         return $result;
     }
-
-    /**
-     * 根据商品id获取商品状态
-     *
-     * @param $product_id
-     */
-    public static function getGoodsStatusByProductId($product_id){
-
-    }
-
 
     /**
      * 根据商品id获取商品图片
