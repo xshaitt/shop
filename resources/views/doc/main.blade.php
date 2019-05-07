@@ -6,40 +6,40 @@
   <title>上海黑之白文档管理系统</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="{{ asset('apidoc/documents/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('doc/documents/css/bootstrap.min.css') }}" rel="stylesheet">
 
   <!-- Documentation extras -->
-  <link href="{{ asset('apidoc/documents/css/docs.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('doc/documents/css/docs.min.css') }}" rel="stylesheet">
 
-  <link href="{{ asset('apidoc/documents/css/patch.css') }}" rel="stylesheet">
+  <link href="{{ asset('doc/documents/css/patch.css') }}" rel="stylesheet">
   @yield('styles')
   <!--[if lt IE 9]>
-  <script src="{{ asset('apidoc/documents/js/ie8-responsive-file-warning.js') }}"></script>
+  <script src="{{ asset('doc/documents/js/ie8-responsive-file-warning.js') }}"></script>
   <![endif]-->
-  <script src="{{ asset('apidoc/documents/js/ie-emulation-modes-warning.js') }}"></script>
+  <script src="{{ asset('doc/documents/js/ie-emulation-modes-warning.js') }}"></script>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
-  <script src="{{ asset('apidoc/documents/js/html5shiv.min.js') }}"></script>
-  <script src="{{ asset('apidoc/documents/js/espond.min.js') }}"></script>
+  <script src="{{ asset('doc/documents/js/html5shiv.min.js') }}"></script>
+  <script src="{{ asset('doc/documents/js/espond.min.js') }}"></script>
   <![endif]-->
   <!-- Favicons -->
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="icon" href="/favicon.ico">
   <!--debug-->
-  <link rel="stylesheet" href="{{ asset('resources/assets/documents/css/debug.css') }}">
-  <script src="{{ asset('apidoc/documents/js/crypto-js-3.1.9-1/crypto-js.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset('doc/documents/css/debug.css') }}">
+  <script src="{{ asset('doc/documents/js/crypto-js-3.1.9-1/crypto-js.js') }}"></script>
 
-  <link rel="stylesheet" href="{{ asset('resources/assets/editor-md/css/editormd.min.css') }}" />
-  <script src="{{ asset('resources/assets/documents/js/jquery.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/marked.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/prettify.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/raphael.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/underscore.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/sequence-diagram.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/flowchart.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/lib/jquery.flowchart.min.js') }}"></script>
-  <script src="{{ asset('apidoc/editor-md/editormd.min.js') }}" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="{{ asset('doc/editor-md/css/editormd.min.css') }}" />
+  <script src="{{ asset('doc/documents/js/jquery.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/marked.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/prettify.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/raphael.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/underscore.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/sequence-diagram.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/flowchart.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/lib/jquery.flowchart.min.js') }}"></script>
+  <script src="{{ asset('doc/editor-md/editormd.min.js') }}" type="text/javascript" charset="utf-8"></script>
   <script>
     var _hmt = _hmt || [];
   </script>
@@ -62,11 +62,11 @@
       </button>
       <div>
         <a href="#" class="navbar-brand">上海黑之白</a>
-        <a href="/apidoc/documents" class="navbar-brand">Api接口文档</a>
-        <a href="/apidoc/apiDebug" class="navbar-brand">Api接口调试</a>
-        <a href="/apidoc/dbStructDocuments" class="navbar-brand">数据库表结构</a>
-        <a href="/apidoc/apiDevDocuments" class="navbar-brand">接口开发说明文档</a>
-        <a href="/apidoc/apiPublicDocuments" class="navbar-brand">公共文档</a>
+        <a href="/doc/documents" class="navbar-brand">Api接口文档</a>
+        <a href="/doc/apiDebug" class="navbar-brand">Api接口调试</a>
+        <a href="/doc/dbStructDocuments" class="navbar-brand">数据库表结构</a>
+        <a href="/doc/apiDevDocuments" class="navbar-brand">接口开发说明文档</a>
+        <a href="/doc/apiPublicDocuments" class="navbar-brand">公共文档</a>
       </div>
     </div>
     <nav id="bs-navbar" class="collapse navbar-collapse">
@@ -80,7 +80,7 @@
 <div class="bs-docs-header" id="content" tabindex="-1">
   <div class="container">
     {if($nav == "documents")}
-    <p>&nbsp;&nbsp;&nbsp;<a href='?item=api'>api</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href='?item=third'>第三方开放平台</a>&nbsp;&nbsp;&nbsp; <a href='http://192.168.2.10/apidoc/generateApiDocuments?book_id={$book_id}&item={$item}'>生成api接口文档</a></p>
+    <p>&nbsp;&nbsp;&nbsp;<a href='?item=api'>api</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href='?item=third'>第三方开放平台</a>&nbsp;&nbsp;&nbsp; <a href='http://192.168.2.10/doc/generateApiDocuments?book_id={$book_id}&item={$item}'>生成api接口文档</a></p>
     {/if}
 
     {if($nav == "apiDebug")}
@@ -88,7 +88,7 @@
     {/if}
 
     {if($nav == "dbStructDocuments")}
-    <p>&nbsp;&nbsp;&nbsp;<a href='?item=3'>机器人</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href='?item=5'>太阳家族</a>&nbsp;&nbsp;&nbsp; <a href='http://192.168.2.10/apiapidoc/generateDbDocuments?book_id={$item}&db_name={$db_name}'>生成数据库表结构</a></p>
+    <p>&nbsp;&nbsp;&nbsp;<a href='?item=3'>机器人</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href='?item=5'>太阳家族</a>&nbsp;&nbsp;&nbsp; <a href='http://192.168.2.10/doc/generateDbDocuments?book_id={$item}&db_name={$db_name}'>生成数据库表结构</a></p>
     {/if}
 
     {if($nav == "apiDevDocuments")}
