@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>上海文档管理系统</title>
+  <title>上海黑之白文档管理系统</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{{ asset('apidoc/documents/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -61,7 +61,7 @@
         <span class="icon-bar"></span>
       </button>
       <div>
-        <a href="#" class="navbar-brand">上海常仁</a>
+        <a href="#" class="navbar-brand">上海黑之白</a>
         <a href="/apidoc/documents" class="navbar-brand">Api接口文档</a>
         <a href="/apidoc/apiDebug" class="navbar-brand">Api接口调试</a>
         <a href="/apidoc/dbStructDocuments" class="navbar-brand">数据库表结构</a>
