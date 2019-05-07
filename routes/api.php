@@ -18,5 +18,13 @@ Route::get('xsh', function () {
 });
 
 Route::post('/user/register', 'Api\UserController@createUser');
+//商品
 Route::get('/goods/list', 'Api\GoodsController@goodsList');
 Route::get('/goods/detail', 'Api\GoodsController@goodsDetail');
+//收货地址
+Route::get('/address/list', 'Api\AddressController@addressList');
+Route::get('/address/detail', 'Api\AddressController@addressDetail');
+Route::get('/country/list', 'Api\AddressController@countryList');
+Route::post('/address/update', 'Api\AddressController@updateAddress');
+Route::post('/address/create', 'Api\AddressController@createAddress');
+Route::get('/address/setDefault', 'Api\AddressController@setDefaultAddress');

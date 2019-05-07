@@ -2,14 +2,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BaseRequest;
+use \Illuminate\Http\Request;
 use App\Http\Service\ApiService;
 use App\Models\Goods;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-
+/**
+ * @title 商品管理
+ * @class Goods
+ * @auth 邹柯
+ * @date 2019/05/06~2019/05/07
+ */
 class GoodsController extends Controller
 {
+
     /**
      * @title 商品列表
      * @desc  {"0":"接口地址：/goods/list","1":"请求方式：GET","2":"开发者: 邹柯"}
@@ -37,10 +44,10 @@ class GoodsController extends Controller
     public function goodsList(Request $request){
         //参数校验
         $messages = [
-            'seller_id.required'  => 'seller_id不能为空',
-            'seller_id.numeric'   => 'seller_id必须是整形!',
-            'page.numeric'        => 'page必须是整形!',
-            'page_size.numeric'   => 'page_size必须是整形!',
+            'seller_id.required'  => 41001,
+            'seller_id.numeric'   => 42001,
+            'page.numeric'        => 40001,
+            'page_size.numeric'   => 40002,
         ];
         $validator = Validator::make($request->all(), [
             'seller_id' => 'bail|required|numeric',
@@ -49,7 +56,7 @@ class GoodsController extends Controller
         ],$messages);
 
         if ($validator->fails()) {
-            return ApiService::error(40000,$validator->errors()->first());
+            return ApiService::error($validator->errors()->first());
         }
 
         //获取接收参数
@@ -125,10 +132,10 @@ class GoodsController extends Controller
     public function goodsDetail(Request $request){
         //参数校验
         $messages = [
-            'product_id.required'  => 'product_id不能为空',
-            'product_id.numeric'   => 'product_id必须是整形!',
-            'product_attribute_id.required'  => 'product_attribute_id不能为空',
-            'product_attribute_id.numeric'   => 'product_attribute_id必须是整形!',
+            'product_id.required'  => 41002,
+            'product_id.numeric'   => 42002,
+            'product_attribute_id.required'  => 41003,
+            'product_attribute_id.numeric'   => 42003,
         ];
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|numeric',
@@ -136,7 +143,7 @@ class GoodsController extends Controller
         ],$messages);
 
         if ($validator->fails()) {
-            return ApiService::error(40000,$validator->errors()->first());
+            return ApiService::error($validator->errors()->first());
         }
 
         //获取接收参数

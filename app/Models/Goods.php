@@ -33,7 +33,7 @@ class Goods extends Model
                 ['p.parent_id','=',null]
             ])->count();
 
-        $total_page_sizes = ceil($count/$page_size)+1;
+        $total_page_sizes = ceil($count/$page_size);
 
         $result = Db::table('products as p')->addSelect(['pg.product_id','pg.name','pg.quantity','pg.price'])
             ->leftJoin('products_grid as pg','p.id','=','pg.product_id')
