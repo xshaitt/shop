@@ -28,3 +28,13 @@ Route::get('/country/list', 'Api\AddressController@countryList');
 Route::post('/address/update', 'Api\AddressController@updateAddress');
 Route::post('/address/create', 'Api\AddressController@createAddress');
 Route::get('/address/setDefault', 'Api\AddressController@setDefaultAddress');
+
+
+Route::get('documents', 'Doc\ApiDocController@documents');
+Route::get('dbStructDocuments', 'Doc\DocumentsController@dbStructDocuments');
+Route::get('generateTableStruct', 'Doc\DocumentsController@generateTableStruct');
+Route::get('apiDevDocuments', 'Doc\DocumentsController@apiDevDocuments');
+Route::get('apiPublicDocuments', 'Doc\DocumentsController@apiPublicDocuments');
+Route::get('apiDebug', 'Doc\DocumentsController@apiDebug');
+Route::get('generateApiDocuments', 'Doc\GenerateDocumentsController@generateApiDocuments');
+Route::get('generateDbDocuments', 'Doc\GenerateDocumentsController@generateDbDocuments');

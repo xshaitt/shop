@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>常仁信息科技文档管理系统</title>
+  <title>上海文档管理系统</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{{ asset('apidoc/documents/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -88,7 +88,7 @@
     {/if}
 
     {if($nav == "dbStructDocuments")}
-    <p>&nbsp;&nbsp;&nbsp;<a href='?item=3'>机器人</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href='?item=5'>太阳家族</a>&nbsp;&nbsp;&nbsp; <a href='http://192.168.2.10/apidoc/generateDbDocuments?book_id={$item}&db_name={$db_name}'>生成数据库表结构</a></p>
+    <p>&nbsp;&nbsp;&nbsp;<a href='?item=3'>机器人</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <a href='?item=5'>太阳家族</a>&nbsp;&nbsp;&nbsp; <a href='http://192.168.2.10/apiapidoc/generateDbDocuments?book_id={$item}&db_name={$db_name}'>生成数据库表结构</a></p>
     {/if}
 
     {if($nav == "apiDevDocuments")}

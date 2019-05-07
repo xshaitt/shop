@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\ApiDoc;
+namespace App\Http\Controllers\Doc;
 
 use App\Models\ZkDocuments;
 use App\Http\Service\ApiService;

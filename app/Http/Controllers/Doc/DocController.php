@@ -1,18 +1,16 @@
 <?php
-namespace App\Http\Controllers\ApiDoc;
+namespace App\Http\Controllers\Doc;
 
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 use App\Models\ZkDocuments;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
 
 
 /**
  * @title 文档管理
  * @auth 邹柯
  */
-class ApiDocController extends Controller
+class DocController extends Controller
 {
     protected $action;
     protected $config;

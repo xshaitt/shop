@@ -1,4 +1,4 @@
-@extends('apidoc.main')
+@extends('doc.main')
 @section('content')
 <div class="container bs-docs-container">
   <div class="row">

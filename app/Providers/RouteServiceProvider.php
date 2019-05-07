@@ -41,7 +41,7 @@ class RouteServiceProvider extends ServiceProvider
 
 
         //自己注册的路由文件
-        $this->mapApiDocRoutes();
+        $this->mapDocRoutes();
     }
 
     /**
@@ -80,10 +80,10 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapApiDocRoutes()
+    protected function mapDocRoutes()
     {
-        Route::prefix('apidoc')
+        Route::prefix('doc')
             ->namespace($this->namespace)
-            ->group(base_path('routes/apidoc.php'));
+            ->group(base_path('routes/doc.php'));
     }
 }
