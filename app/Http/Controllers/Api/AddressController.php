@@ -239,7 +239,7 @@ class AddressController extends Controller
 
     /**
      * @title 设置默认收货地址
-     * @desc  {"0":"接口地址：/api/address/setdefault","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/address/setDefault","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
