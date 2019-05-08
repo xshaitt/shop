@@ -175,10 +175,11 @@ class GoodsController extends Controller
      * @return {"name":"image_paths","type":"string","required":false,"desc":"商品轮播图","level":2}
      * @return {"name":"created_at","type":"date","required":true,"desc":"收藏时间","level":2}
      * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":2}
+     * @return {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":2}
      * @return {"name":"name","type":"string","required":true,"desc":"商品名称","level":2}
      * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":2}
      * @return {"name":"image_path","type":"string","required":true,"desc":"商品图片地址","level":2}
-     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":"1","page_size":"4","total_page_sizes":1,"result":[{"id":1,"created_at":"2019-05-08 16:49:40","product_id":22,"image_path":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg","name":"秋冬棉衣","price":"100.0000","status":1},{"id":4,"created_at":"2019-05-08 16:54:03","product_id":131,"image_path":null,"name":"测试商品","price":"0.0000","status":1}]}}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":10,"total_page_sizes":1,"result":[{"id":1,"created_at":"2019-05-08 16:49:40","product_id":22,"product_attribute_id":44,"image_path":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg","name":"秋冬棉衣","price":"100.0000","status":1},{"id":4,"created_at":"2019-05-08 16:54:03","product_id":131,"product_attribute_id":262,"image_path":null,"name":"测试商品","price":"0.0000","status":1}]}}
      */
     public function goodsCollectionList(Request $request){
         //参数校验

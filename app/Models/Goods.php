@@ -53,20 +53,25 @@ class Goods extends Model
     }
 
     /**
-     * 获取商品详情信息
+     * 获取商品详情
      *
-     * @param $product_ids int 是 商品id列表
+     * @param $product_attribute_ids int 是 商品属性id列表
      * @param string $locale string 是 本地化
      * @return array
      */
-    public static function getGoodsDetail($product_ids,$locale = 'zh-cn'){
-        $result = Db::table('product_flat')->addSelect(['name','price','product_id','description','new','featured','status','visible_individually'])
-            ->whereIn('product_id',$product_ids)
+    public static function getGoodsDetail($product_attribute_ids,$product_ids,$locale = 'zh-cn'){
+        $result = Db::table('product_flat')->addSelect(['name','price','parent_id','description','new','featured','status','visible_individually'])
+            ->whereIn('id',$product_attribute_ids)
             ->where('locale','=',$locale)->get();
-
         if(!empty($result)){
             $result = object_to_array($result);
             //获取商品图片
+            $result_p = Db::table('product_flat')->addSelect(['product_id','description','new','featured','visible_individually'])
+                ->whereIn('product_id',$product_ids)
+                ->where('locale','=',$locale)->get();
+            foreach($result_p as $k=>$v){
+                $res[$v['product_id']] = $v;
+            }
             $product_images = Goods::getGoodsImageByProductIds($product_ids);
             if(!empty($product_images)){
                 foreach($product_images as $k=>$v){
@@ -75,6 +80,7 @@ class Goods extends Model
 
                 foreach($result as $k=>$v){
                     $result[$k]['image_paths'] = isset($p_imgs[$v['product_id']])? $p_imgs[$v['product_id']] : null;
+                    $result[$k]['image_paths'] = $res[$v['product_id']]['description'];
                 }
             }else{
                 foreach($result as $k=>$v){
@@ -136,23 +142,6 @@ class Goods extends Model
                 ['locale','=',$locale],
                 ['parent_id','=',null]
             ])->value('id');
-
-        return $result;
-    }
-
-    /**
-     * 获取商品id
-     *
-     * @author 邹柯
-     * @param $locate_product_id int 是 本地化商品id
-     * @param $locale string 是 本地化
-     * @return mixed
-     */
-    private static function getGoodsSkuId($locate_product_id){
-        $result = Db::table('product_flat')
-            ->where([
-                ['id','=',$locate_product_id]
-            ])->value('product_id');
 
         return $result;
     }
@@ -229,15 +218,16 @@ class Goods extends Model
 
         $total_page_sizes = ceil($count/$page_size);
 
-        $result = Db::table('product_collection as pc')->addSelect(['id','created_at','product_id'])
+        $result = Db::table('product_collection as pc')->addSelect(['id','created_at','product_id','product_attribute_id'])
             ->where([
                 ['pc.seller_id','=',$seller_id],
                 ['pc.customer_id','=',$customer_id]
             ])->offset($offset)->limit($page_size)->get();
         if(!empty($result)){
             $result = object_to_array($result);
-            $product_ids = array_values(array_unique(array_column($result,'product_id')));
-            $product_detail = self::getGoodsDetail($product_ids,$locale);
+            $product_ids = array_unique(array_column($result,'product_id'));
+            $product_attribute_ids = array_unique(array_column($result,'product_attribute_id'));
+            $product_detail = self::getGoodsDetail($product_attribute_ids,$product_ids,$locale);
             if(!empty($product_detail)){
                 foreach($product_detail as $k=>$v){
                     $p_detail[$v['product_id']]['name'] = $v['name'];
