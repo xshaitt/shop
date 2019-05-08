@@ -29,7 +29,7 @@ class UserController extends Controller
     }
 
     /**
-     * @title 用户信息
+     * @title 注册用户
      * @desc  {"0":"接口地址：/api/user/register","1":"请求方式：POST","2":"开发者: 帅华"}
      */
     public function createUser(Request $request)
