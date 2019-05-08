@@ -141,9 +141,9 @@ class DocController extends Controller
      * @auth 邹柯
      */
     public function apiDevDocuments(){
-        $api_doc_sidebar_nav = $this->db->table('md_documents')->select('document_id as doc_nav_en,document_name as doc_nav_zh')->where([
+        $api_doc_sidebar_nav = object_to_array($this->db->table('md_documents')->select('document_id as doc_nav_en,document_name as doc_nav_zh')->where([
             ['book_id',$this->item],['order_sort',0]
-        ])->get()->toArray();
+        ])->get());
         if(!empty($api_doc_sidebar_nav)){
             foreach($api_doc_sidebar_nav as $k=>$v){
                 $sidebar_nav[] = [
@@ -155,16 +155,16 @@ class DocController extends Controller
             $sidebar_nav = null;
         }
 
-        $info = $this->db->table('md_documents')->select('markdown')->where([
+        $info = (array)$this->db->table('md_documents')->select('markdown')->where([
             ['book_id',$this->item],['document_id',$this->sidebar_nav],['order_sort'=>0]
-        ])->first()->toArray();
+        ])->first();
         if(empty($doc_content)){
             $doc_content = $info['markdown'];
         }else{
             $doc_content = null;
         }
 
-        return view('edit-md',[
+        return view('doc.doc.edit-md',[
             'doc_content'=>$doc_content,
             'api_doc_sidebar_nav'=>$sidebar_nav,
             'nav'=>'apiDevDocuments',

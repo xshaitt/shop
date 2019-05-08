@@ -64,7 +64,7 @@
         <a href="#" class="navbar-brand">上海黑之白</a>
         <a href="/doc/doc/documents" class="navbar-brand">Api接口文档</a>
         <a href="/doc/doc/apiDebug" class="navbar-brand">Api接口调试</a>
-        <a href="/doc/doc/apiDevDocuments" class="navbar-brand">接口开发说明文档</a>
+{{--        <a href="/doc/doc/apiDevDocuments" class="navbar-brand">接口开发说明文档</a>--}}
       </div>
     </div>
   </div>
