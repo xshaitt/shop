@@ -62,12 +62,7 @@ class DocController extends Controller
         $documents = new ZkDocuments($this->item);
         $list = $documents->getApiDocuments();
 
-        if($this->item == "api"){
-            $book_id = 1;
-        }else{
-            $book_id = 4;
-        }
-        return view('doc.doc.documents', compact('list','nav','item','book_id'));
+        return view('doc.doc.documents', compact('list'));
 
     }
 
@@ -110,7 +105,7 @@ class DocController extends Controller
                 $in_method_start = stripos($v2['desc'],"请求方式：") + 15;
                 $method = explode("<",substr($v2['desc'], $in_method_start))[0];
 
-                $controller = explode("-",$v['param'])[3];
+                $controller = explode("-",$v['param'])[4];
                 $action = $v2['name'];
 
                 $arr2[$k2] = [

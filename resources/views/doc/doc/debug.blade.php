@@ -1,5 +1,5 @@
-{extend name='main'}
-{block name="content"}
+@extends('doc.main')
+@section('content')
 <!-- 主内容 -->
 <div class="container request-box">
         <div class="col-sm-12">
@@ -11,7 +11,7 @@
                       </div>
                       <div class="request-action">
                         <label>执行器：&nbsp;</label><select id="a"></select>
-                        <select id="loadAPI-Base-URL"></select>
+{{--                        <select id="loadAPI-Base-URL"></select>--}}
                       </div>
                       <div class="request-btn">
                         <input id="POST-BTN" type="button" value="POST" />
@@ -29,9 +29,9 @@
 </div>
 <!-- 主内容END -->
 <script>
-    var API_Base_URLS = ['test.changrentech.com'];
+    var API_Base_URLS = ['shop.dev.com'];
     var API_Doc=<?php echo $list;?>;
 </script>
-<script src="/static/documents/js/debug.js"></script>
-<script src="/static/plugs/jquery/jquery.cookie.js"></script>
-{/block}
+<script src="{{ asset('doc/documents/js/jquery/jquery.cookie.js') }}"></script>
+<script src="{{ asset('doc/documents/js/debug.js') }}"></script>
+@stop
