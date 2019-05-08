@@ -189,11 +189,9 @@
                 request.setRequestHeader("token", token);
             },
             success: function (data) {
-                //将json字符串转json对象
-                // var data_obj = eval('(' + data + ")")
                 //判断请求是否成功并且该请求是登录操作，如果都满足就将请求回来的token写入cookie
-                // if(data_obj.code === 0 && api_url_center === "v1/user/login"){
-                //     $.cookie("token",data_obj.data.token);
+                // if(data.code === 0 && api_url_center === "api/user/login"){
+                //     $.cookie("token",data.data.token);
                 // }
                 //格式化字符串
                 var mes=JSON.stringify(data, null, 4);
