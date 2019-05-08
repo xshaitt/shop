@@ -37,19 +37,6 @@ class DocController extends Controller
             }
         }
 
-        if($this->action == 'dbStructDocuments') {
-            if(empty($this->item)){
-                header("Location: ?item=3");
-                exit;
-            }else{
-                if(empty($this->sidebar_nav)){
-                    $info = $this->db->table('md_documents')->select('document_id')->where('book_id',$this->item)->first()->toArray();
-                    header("Location: ?item=".$this->item."&sidebar_nav=".$info['document_id']);
-                    exit;
-                }
-            }
-        }
-
         if($this->action == 'apiDevDocuments') {
             if(empty($this->item)){
                 header("Location: ?item=1");
@@ -59,19 +46,6 @@ class DocController extends Controller
                     $info = $this->db->table('md_documents')->select('document_id')->where([
                         ['book_id','=',$this->item],['order_sort','=',0]
                     ])->first()->toArray();
-                    header("Location: ?item=".$this->item."&sidebar_nav=".$info['document_id']);
-                    exit;
-                }
-            }
-        }
-
-        if($this->action == 'apiPublicDocuments') {
-            if(empty($this->item)){
-                header("Location: ?item=6");
-                exit;
-            }else{
-                if(empty($this->sidebar_nav)){
-                    $info = $this->db->table('md_documents')->select('document_id')->where('book_id',$this->item)->first()->toArray();
                     header("Location: ?item=".$this->item."&sidebar_nav=".$info['document_id']);
                     exit;
                 }
@@ -170,45 +144,6 @@ class DocController extends Controller
     }
 
     /**
-     * @title 数据库结构文档
-     * @auth 邹柯
-     */
-    public function dbStructDocuments(){
-        $api_doc_sidebar_nav = $this->db->table('md_documents')->select('document_id as doc_nav_en,document_name as doc_nav_zh')->where('book_id',$this->item)->get()->toArray();
-        if(!empty($api_doc_sidebar_nav)){
-            foreach($api_doc_sidebar_nav as $k=>$v){
-                $sidebar_nav[] = [
-                    'doc_nav_en'=> $v['doc_nav_en'],
-                    'doc_nav_zh'=> $v['doc_nav_zh'],
-                ];
-            }
-        }else{
-            $sidebar_nav = null;
-        }
-
-        $info = $this->db->table('md_documents')->select('markdown')->where([
-            ['book_id',$this->item],['document_id',$this->sidebar_nav]
-        ])->first()->toArray();
-        if(empty($doc_content)){
-            $doc_content = $info['markdown'];
-        }else{
-            $doc_content = null;
-        }
-        if($this->item == 3){
-            $db_name = "cradmin";
-        }else{
-            $db_name = "sun";
-        }
-        return view('edit-md',[
-            'doc_content'=>$doc_content,
-            'api_doc_sidebar_nav'=>$sidebar_nav,
-            'nav'=>'dbStructDocuments',
-            'item'=>$this->item,
-            'db_name'=>$db_name
-        ]);
-    }
-
-    /**
      * @title 接口开发说明文档
      * @auth 邹柯
      */
@@ -230,40 +165,6 @@ class DocController extends Controller
         $info = $this->db->table('md_documents')->select('markdown')->where([
             ['book_id',$this->item],['document_id',$this->sidebar_nav],['order_sort'=>0]
         ])->first()->toArray();
-        if(empty($doc_content)){
-            $doc_content = $info['markdown'];
-        }else{
-            $doc_content = null;
-        }
-
-        return view('edit-md',[
-            'doc_content'=>$doc_content,
-            'api_doc_sidebar_nav'=>$sidebar_nav,
-            'nav'=>'apiDevDocuments',
-            'item'=>$this->item,
-        ]);
-    }
-
-    /**
-     * @title 公共文档
-     * @auth 邹柯
-     */
-    public function apiPublicDocuments(){
-        $api_doc_sidebar_nav = $this->db->table('md_documents')->select('document_id as doc_nav_en,document_name as doc_nav_zh')->where('book_id',$this->item)->get()->toArray();
-        if(!empty($api_doc_sidebar_nav)){
-            foreach($api_doc_sidebar_nav as $k=>$v){
-                $sidebar_nav[] = [
-                    'doc_nav_en'=> $v['doc_nav_en'],
-                    'doc_nav_zh'=> $v['doc_nav_zh'],
-                ];
-            }
-        }else{
-            $sidebar_nav = null;
-        }
-
-        $info = $this->db->table('md_documents')->select('markdown')->where(
-            ['book_id',$this->item],['document_id',$this->sidebar_nav]
-        )->first()->toArray();
         if(empty($doc_content)){
             $doc_content = $info['markdown'];
         }else{

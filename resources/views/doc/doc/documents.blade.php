@@ -8,8 +8,8 @@
         <h1 id="<?php echo $vol['param']?>" class="page-header"><?php echo $vol['title']?></h1>
         <p class="lead"><code><?php echo $vol['class']?></code></p>
           <?php foreach($vol['method'] as $k => $vo){?>
-          <h3 id="-<?php echo $k?>-<?php echo $vo['name']?>"><?php echo $k + 1?>. <?php echo $vo['title']?></h3>
-          <p>方法名: <code><?php echo $vo['name']?>()</code></p>
+          <h3 id="<?php echo 0?>-<?php echo $k?>-<?php echo $vo['name']?>"><?php echo $k + 1?>. <?php echo $vo['title']?></h3>
+          <p><h4>方法名: <code><?php echo $vo['name']?>()</code></h4></p>
           <div class="bs-callout bs-callout-info">
             <p><?php echo $vo['desc']?></p>
           </div>
@@ -82,9 +82,8 @@
           <li>
             <a href="#<?php echo $vol['param']?>"><?php echo $vol['title']?></a>
             <ul class="nav">
-              {foreach name="$vol.method" item="vo" key="k"}
               <?php foreach($vol['method'] as $k=>$vo){ ?>
-              <li><a href="#<?php echo $key?>-<?php echo $k?>-<?php echo $vo['name']?>"><?php echo $vo['title']?></a></li>
+              <li><a href="#<?php echo 0?>-<?php echo $k?>-<?php echo $vo['name']?>"><?php echo $vo['title']?></a></li>
               <?php } ?>
             </ul>
           </li>
