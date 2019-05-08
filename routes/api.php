@@ -21,6 +21,9 @@ Route::post('/user/register', 'Api\UserController@createUser');
 //商品
 Route::get('/goods/list', 'Api\GoodsController@goodsList');
 Route::get('/goods/detail', 'Api\GoodsController@goodsDetail');
+Route::get('/goods_collection/list', 'Api\GoodsController@goodsCollectionList');
+Route::get('/goods_collection/cancel', 'Api\GoodsController@cancelGoodsCollection');
+Route::post('/goods_collection/add', 'Api\GoodsController@addGoodsCollection');
 //收货地址
 Route::get('/address/list', 'Api\AddressController@addressList');
 Route::get('/address/detail', 'Api\AddressController@addressDetail');

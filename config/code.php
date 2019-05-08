@@ -28,6 +28,7 @@ return [
             '41011' => 'gender不能为空!',
             '41012' => 'date_of_birth不能为空!',
             '41013' => 'email不能为空!',
+            '41014' => 'product_collection_id不能为空!',
 
             '42001' => 'seller_id必须是整形!',
             '42002' => 'product_id必须是整形!',
@@ -38,6 +39,7 @@ return [
             '42007' => 'gender必须是0或1的整形!',
             '42008' => 'date_of_birth格式不正确!',
             '42009' => 'email格式不正确!',
+            '42010' => 'product_collection_id必须是整数!',
         ]
     ]
 ];
