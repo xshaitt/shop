@@ -32,6 +32,6 @@
     var API_Base_URLS = ['shop.dev.com'];
     var API_Doc=<?php echo $list;?>;
 </script>
-<script src="{{ asset('doc/documents/js/jquery/jquery.cookie.js') }}"></script>
 <script src="{{ asset('doc/documents/js/debug.js') }}"></script>
+<script src="{{ asset('doc/documents/js/jquery.cookie.js') }}"></script>
 @stop

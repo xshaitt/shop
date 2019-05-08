@@ -18,7 +18,7 @@ class GoodsController extends Controller
 
     /**
      * @title 商品列表
-     * @desc  {"0":"接口地址：/goods/list","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/goods/list","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"seller_id","type":"int","required":true,"desc":"店铺id","level":1}
      * @param {"name":"page","type":"int","required":false,"desc":"页码,不传默认1","level":1}
      * @param {"name":"page_size","type":"int","required":false,"desc":"每页显示条数，不传默认4","level":1}
@@ -102,7 +102,7 @@ class GoodsController extends Controller
 
     /**
      * @title 商品详情
-     * @desc  {"0":"接口地址：/goods/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/goods/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"product_id","type":"int","required":true,"desc":"商品id","level":1}
      * @param {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}

@@ -17,7 +17,7 @@ class AddressController extends Controller
 {
     /**
      * @title 收货地址列表
-     * @desc  {"0":"接口地址：/address/list","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/address/list","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"page","type":"int","required":false,"desc":"页码,不传默认1","level":1}
      * @param {"name":"page_size","type":"int","required":false,"desc":"每页显示条数，不传默认5","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
@@ -62,7 +62,7 @@ class AddressController extends Controller
 
     /**
      * @title 收货地址详情
-     * @desc  {"0":"接口地址：/address/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/address/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
      * @return {"name":"data","type":"","required":true,"desc":"","level":1}
@@ -101,7 +101,7 @@ class AddressController extends Controller
 
     /**
      * @title 国家列表
-     * @desc  {"0":"接口地址：/country/list","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/country/list","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
      * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"id","type":"int","required":true,"desc":"唯一自增id","level":2}
@@ -119,7 +119,7 @@ class AddressController extends Controller
 
     /**
      * @title 修改收货地址
-     * @desc  {"0":"接口地址：/address/update","1":"请求方式：POST","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/address/update","1":"请求方式：POST","2":"开发者: 邹柯"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id"}
      * @param {"name":"country","type":"string","required":true,"desc":"国家名称"}
@@ -180,7 +180,7 @@ class AddressController extends Controller
 
     /**
      * @title 添加收货地址
-     * @desc  {"0":"接口地址：/address/create","1":"请求方式：POST","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/address/create","1":"请求方式：POST","2":"开发者: 邹柯"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"country","type":"string","required":true,"desc":"国家名称"}
      * @param {"name":"state","type":"string","required":true,"desc":"省/州"}
@@ -239,7 +239,7 @@ class AddressController extends Controller
 
     /**
      * @title 设置默认收货地址
-     * @desc  {"0":"接口地址：/address/setdefault","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/address/setdefault","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}

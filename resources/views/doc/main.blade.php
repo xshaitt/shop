@@ -91,7 +91,6 @@
   </div>
 </footer>
 
-<script src="{{ asset('doc/documents/js/jquery.min.js') }}"></script>
 <script src="{{ asset('doc/documents/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('doc/documents/js/docs.min.js') }}"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

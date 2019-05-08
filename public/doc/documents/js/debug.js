@@ -156,7 +156,6 @@
         }else{
             api_url_center = api_url;
         }
-
         return api_url_center;
 	}
 
@@ -175,12 +174,7 @@
         var domain = window.location.host;
 
         var url = "";
-        if(domain === "test.changrentech.com" || domain === "https://test.changrentech.com" || domain === "http://test.changrentech.com"){
-            url = "https://";
-        }else{
-            url = "http://";
-        }
-        url += domain + "/" + api_url_center;
+        url += "http://" + domain + "/" + api_url_center;
 
         return url;
 	}
@@ -196,13 +190,13 @@
             },
             success: function (data) {
                 //将json字符串转json对象
-                var data_obj = eval('(' + data + ")")
+                // var data_obj = eval('(' + data + ")")
                 //判断请求是否成功并且该请求是登录操作，如果都满足就将请求回来的token写入cookie
-                if(data_obj.code === 0 && api_url_center === "v1/user/login"){
-                    $.cookie("token",data_obj.data.token);
-                }
+                // if(data_obj.code === 0 && api_url_center === "v1/user/login"){
+                //     $.cookie("token",data_obj.data.token);
+                // }
                 //格式化字符串
-                var mes=JSON.stringify(data_obj, null, 4);
+                var mes=JSON.stringify(data, null, 4);
                 //将返回的json格式化输出显示到textarea框内
                 $("#api_iframe").html("<textarea style='width: 100%;min-height: 720px;overflow: auto; border:solid 0px #000;'>" + mes + "</textarea>");
             },

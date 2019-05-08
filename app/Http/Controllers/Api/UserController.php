@@ -30,7 +30,7 @@ class UserController extends Controller
 
     /**
      * @title 用户信息
-     * @desc  {"0":"接口地址：/user/register","1":"请求方式：POST","2":"开发者: 帅华"}
+     * @desc  {"0":"接口地址：/api/user/register","1":"请求方式：POST","2":"开发者: 帅华"}
      */
     public function createUser(Request $request)
     {
@@ -83,7 +83,7 @@ class UserController extends Controller
 
     /**
      * @title 用户信息
-     * @desc  {"0":"接口地址：/user/info","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/user/info","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
      * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"first_name","type":"int","required":true,"desc":"姓名","level":2}
@@ -105,7 +105,7 @@ class UserController extends Controller
 
     /**
      * @title 修改用户信息
-     * @desc  {"0":"接口地址：/user/update","1":"请求方式：POST","2":"开发者: 邹柯"}
+     * @desc  {"0":"接口地址：/api/user/update","1":"请求方式：POST","2":"开发者: 邹柯"}
      * @param {"name":"first_name","type":"string","required":true,"desc":"用户名"}
      * @param {"name":"gender","type":"int","required":true,"desc":"性别"}
      * @param {"name":"date_of_birth","type":"date","required":true,"desc":"出生日期"}

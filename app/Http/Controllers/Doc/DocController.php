@@ -19,7 +19,6 @@ class DocController extends Controller
 
     public function __construct()
     {
-        //$this->redirect('http://doc.changrentech.com:8181/docs/mindoc');
         $this->request = Request();
         $this->action = explode("?",explode("/",$this->request->getRequestUri())[3])[0];
         //获取接口文档配置文件
