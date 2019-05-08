@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BaseRequest;
 use \Illuminate\Http\Request;
 use App\Http\Service\ApiService;
 use App\Models\Goods;
@@ -20,14 +19,11 @@ class GoodsController extends Controller
     /**
      * @title 商品列表
      * @desc  {"0":"接口地址：/goods/list","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"seller_id","type":"int","required":true,"desc":"店铺id","level":1}
      * @param {"name":"page","type":"int","required":false,"desc":"页码,不传默认1","level":1}
      * @param {"name":"page_size","type":"int","required":false,"desc":"每页显示条数，不传默认4","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"page","type":"int","required":true,"desc":"页码","level":2}
      * @return {"name":"page_size","type":"int","required":true,"desc":"每页显示条数","level":2}
      * @return {"name":"total_page_sizes","type":"int","required":true,"desc":"总页数","level":2}
@@ -39,6 +35,7 @@ class GoodsController extends Controller
      * @return {"name":"quantity","type":"int","required":true,"desc":"商品数量","level":4}
      * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":4}
      * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":4}
+     *
      * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":"1","page_size":"4","total_page_sizes":2,"result":[{"category_name":"男装","child_info":[{"product_id":22,"name":"秋冬棉衣","quantity":"0","price":"0","image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg,product/22/e39SQ98DKHH0YU1WHTqRuaSWaZH5su871C0hKwWj.jpeg,product/22/YxoVj0YghLu1OrFWiS8aPRwCyqDSan016nuQw6eb.jpeg"}]},{"category_name":333,"child_info":[{"product_id":43,"name":"dsdsd","quantity":"200","price":"200","image_paths":null}]}]}}]}]}
      */
     public function goodsList(Request $request){
@@ -106,13 +103,10 @@ class GoodsController extends Controller
     /**
      * @title 商品详情
      * @desc  {"0":"接口地址：/goods/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"product_id","type":"int","required":true,"desc":"商品id","level":1}
      * @param {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":2}
      * @return {"name":"description","type":"string","required":false,"desc":"商品描述","level":2}
      * @return {"name":"new","type":"int","required":true,"desc":"是否新品:1是、0否","level":2}

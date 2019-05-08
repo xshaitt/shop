@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Doc;
 
 use App\Http\Controllers\Controller;
-use App\Models\ZkDocuments;
+use App\Models\doc;
 use Illuminate\Support\Facades\DB;
 
 
@@ -19,7 +19,6 @@ class DocController extends Controller
 
     public function __construct()
     {
-        $this->db = DB::connection('mindoc');
         //$this->redirect('http://doc.changrentech.com:8181/docs/mindoc');
         $this->request = Request();
         $this->action = explode("?",explode("/",$this->request->getRequestUri())[3])[0];
@@ -59,7 +58,7 @@ class DocController extends Controller
      */
     public function documents()
     {
-        $documents = new ZkDocuments($this->item);
+        $documents = new Doc($this->item);
         $list = $documents->getApiDocuments();
 
         return view('doc.doc.documents', compact('list'));
@@ -71,7 +70,7 @@ class DocController extends Controller
      * @auth 邹柯
      */
     public function apiDebug(){
-        $documents = new ZkDocuments($this->item);
+        $documents = new Doc($this->item);
         $result = $documents->getApiDocuments();
 
         foreach($result as $k=>$v){

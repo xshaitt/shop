@@ -5,6 +5,7 @@ return [
     'template' => 'grape', // 苹果绿:apple 葡萄紫:grape
     'class' => [
         'api' => [
+            'App\Http\Controllers\Api\UserController',
             'App\Http\Controllers\Api\GoodsController',
             'App\Http\Controllers\Api\AddressController',
         ],

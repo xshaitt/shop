@@ -28,3 +28,7 @@ Route::get('/country/list', 'Api\AddressController@countryList');
 Route::post('/address/update', 'Api\AddressController@updateAddress');
 Route::post('/address/create', 'Api\AddressController@createAddress');
 Route::get('/address/setDefault', 'Api\AddressController@setDefaultAddress');
+
+//用户
+Route::get('/user/info', 'Api\UserController@userInfo');
+Route::post('/user/update', 'Api\UserController@updateUser');

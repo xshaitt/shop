@@ -2,13 +2,11 @@
 namespace App\Models;
 
 use App\Http\Service\ReflectionService;
-use Illuminate\Support\Facades\DB;
 
-class ZkDocuments
+class Doc
 {
     public function __construct($item = null)
     {
-        $this->db = DB::connection('mindoc');
         //获取接口文档配置文件
         $this->config = config('documents');
         $this->item = $item;
@@ -222,91 +220,5 @@ class ZkDocuments
 
         return $result;
 
-    }
-
-    /**
-     * @title 给这行文字加上Markdwon的行结尾表示
-     * @param string $str
-     * @param bool $ifNeedEscape 是否给文字加上Markdwon的行结尾表示
-     * @return string
-     * @auth 邹柯
-     */
-    public static function markdownLine($str, $ifNeedEscape = false)
-    {
-        $ifNeedEscape && $str = self::markdownStr($str);
-        return $str . "\n";
-    }
-
-    /**
-     * @param $str
-     * @return mixed
-     * @auth 邹柯
-     */
-    public static function markdownStr($str)
-    {
-        return str_replace('_', '\_', $str);
-    }
-
-    /**
-     * @title 写入文档到数据库中
-     * @param string $text 文档内容
-     * @auth 邹柯
-     */
-    public static function writeToMysql($book_id,$document_name,$document_content,$parent_id = 0,$flag = false)
-    {
-        $time = date('Y-m-d H:i:s',time());
-        //表名没有注释
-        if(strstr($document_name,'(') == false || $flag == false){
-            if(!empty($document_content)){
-                $info = Db::name('md_documents')->field('document_id')->where(['document_name'=>$document_name,'book_id'=>$book_id])->find();
-            }else{
-                $info = Db::name('md_documents')->field('document_id')->where(['document_name'=>$document_name,'book_id'=>$book_id,'markdown'=>$document_content])->find();
-            }
-        }else{
-            $document_name_str = substr($document_name,0,strpos($document_name,"("));
-            if(!empty($document_content)){
-                $info = Db::name('md_documents')->field('document_id')
-                    ->where([
-                        ['document_name', 'like','%'.$document_name_str.'%'],
-                        ['book_id','=',$book_id]
-                    ])
-                    ->find();
-            }else{
-                $info = Db::name('md_documents')->field('document_id')
-                    ->where([
-                        ['document_name', 'like','%'.$document_name_str.'%'],
-                        ['book_id','=',$book_id],
-                        ['markdown','=',$document_content]
-                    ])
-                    ->find();
-            }
-        }
-
-        if(empty($info)){
-            return Db::name('md_documents')->insertGetId([
-                'document_name'=>$document_name,
-                'identify'=>null,
-                'book_id'=>$book_id,
-                'parent_id'=>$parent_id,
-                'order_sort'=>0,
-                'markdown'=>$document_content,
-                'release'=>null,
-                'content'=>null,
-                'create_time'=>$time,
-                'member_id'=>1,
-                'modify_time'=>$time,
-                'modify_at'=>0,
-                'version'=>time(),
-            ]);
-        }else{
-            Db::name('md_documents')->where(['document_id'=>$info['document_id']])->update([
-                'document_name'=>$document_name,
-                'markdown'=>$document_content,
-                'modify_time'=>$time,
-            ]);
-            $parent_id =  Db::name('md_documents')->where(['document_id'=>$info['document_id']])->field('document_id')->find();
-
-            return $parent_id['document_id'];
-        }
     }
 }

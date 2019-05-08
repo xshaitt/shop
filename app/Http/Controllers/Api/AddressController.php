@@ -18,13 +18,10 @@ class AddressController extends Controller
     /**
      * @title 收货地址列表
      * @desc  {"0":"接口地址：/address/list","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"page","type":"int","required":false,"desc":"页码,不传默认1","level":1}
      * @param {"name":"page_size","type":"int","required":false,"desc":"每页显示条数，不传默认5","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"page","type":"int","required":true,"desc":"页码","level":2}
      * @return {"name":"page_size","type":"int","required":true,"desc":"每页显示条数","level":2}
      * @return {"name":"total_page_sizes","type":"int","required":true,"desc":"总页数","level":2}
@@ -66,12 +63,9 @@ class AddressController extends Controller
     /**
      * @title 收货地址详情
      * @desc  {"0":"接口地址：/address/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"customer_id","type":"int","required":true,"desc":"客户id","level":2}
      * @return {"name":"country","type":"string","required":true,"desc":"国家","level":2}
      * @return {"name":"state","type":"string","required":true,"desc":"省/州","level":2}
@@ -108,11 +102,8 @@ class AddressController extends Controller
     /**
      * @title 国家列表
      * @desc  {"0":"接口地址：/country/list","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"id","type":"int","required":true,"desc":"唯一自增id","level":2}
      * @return {"name":"code","type":"string","required":true,"desc":"国家编码","level":2}
      * @return {"name":"name","type":"string","required":true,"desc":"国家名称","level":2}
@@ -129,9 +120,6 @@ class AddressController extends Controller
     /**
      * @title 修改收货地址
      * @desc  {"0":"接口地址：/address/update","1":"请求方式：POST","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id"}
      * @param {"name":"country","type":"string","required":true,"desc":"国家名称"}
@@ -140,9 +128,9 @@ class AddressController extends Controller
      * @param {"name":"address1","type":"string","required":true,"desc":"街道地址"}
      * @param {"name":"postcode","type":"string","required":true,"desc":"邮政编码"}
      * @param {"name":"phone","type":"string","required":true,"desc":"电话"}
-     * @param {"name":"default_address","type":"int","required":true,"desc":"是否默认收货地址:1是、0否"}
+     * @param {"name":"default_address","type":"int","required":false,"desc":"是否默认收货地址:1是、0否"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"int","required":true,"desc":"修改成功的记录数","level":1}
      * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
      */
     public function updateAddress(Request $request){
@@ -193,9 +181,6 @@ class AddressController extends Controller
     /**
      * @title 添加收货地址
      * @desc  {"0":"接口地址：/address/create","1":"请求方式：POST","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"country","type":"string","required":true,"desc":"国家名称"}
      * @param {"name":"state","type":"string","required":true,"desc":"省/州"}
@@ -203,9 +188,9 @@ class AddressController extends Controller
      * @param {"name":"address1","type":"string","required":true,"desc":"街道地址"}
      * @param {"name":"postcode","type":"string","required":true,"desc":"邮政编码"}
      * @param {"name":"phone","type":"string","required":true,"desc":"电话"}
-     * @param {"name":"default_address","type":"int","required":true,"desc":"是否默认收货地址:1是、0否"}
+     * @param {"name":"default_address","type":"int","required":false,"desc":"是否默认收货地址:1是、0否"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"int","required":true,"desc":"添加成功的记录数","level":1}
      * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
      */
     public function createAddress(Request $request){
@@ -255,13 +240,10 @@ class AddressController extends Controller
     /**
      * @title 设置默认收货地址
      * @desc  {"0":"接口地址：/address/setdefault","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"timestamp","type":"int","required":true,"desc":"当前时间戳"}
-     * @param {"name":"source","type":"string","required":true,"desc":"来源（robot：机器人 app：手机APP）"}
-     * @param {"name":"sign","type":"string","required":true,"desc":"签名"}
      * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id"}
      * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id"}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"json","required":true,"desc":"","level":1}
+     * @return {"name":"data","type":"int","required":true,"desc":"设置成功的记录数","level":1}
      * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
      */
     public function setDefaultAddress(Request $request){
