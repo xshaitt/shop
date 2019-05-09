@@ -8,6 +8,7 @@ return [
             'App\Http\Controllers\Api\UserController',
             'App\Http\Controllers\Api\GoodsController',
             'App\Http\Controllers\Api\AddressController',
+            'App\Http\Controllers\Api\OrderController',
         ],
     ],
 ];

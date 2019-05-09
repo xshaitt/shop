@@ -40,6 +40,7 @@ return [
             '42008' => 'date_of_birth格式不正确!',
             '42009' => 'email格式不正确!',
             '42010' => 'product_collection_id必须是整数!',
+            '42011' => 'status必须是0-4的整数!',
         ]
     ]
 ];

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
  * @title 商品管理
  * @class Goods
  * @auth 邹柯
- * @date 2019/05/06~2019/05/07
+ * @date 2019/05/06~2019/05/09
  */
 class GoodsController extends Controller
 {
@@ -35,8 +35,7 @@ class GoodsController extends Controller
      * @return {"name":"quantity","type":"int","required":true,"desc":"商品数量","level":4}
      * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":4}
      * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":4}
-     *
-     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":"1","page_size":"4","total_page_sizes":2,"result":[{"category_name":"男装","child_info":[{"product_id":22,"name":"秋冬棉衣","quantity":"0","price":"0","image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg,product/22/e39SQ98DKHH0YU1WHTqRuaSWaZH5su871C0hKwWj.jpeg,product/22/YxoVj0YghLu1OrFWiS8aPRwCyqDSan016nuQw6eb.jpeg"}]},{"category_name":333,"child_info":[{"product_id":43,"name":"dsdsd","quantity":"200","price":"200","image_paths":null}]}]}}]}]}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":4,"total_page_sizes":1,"result":[{"category_name":"男装","child_info":[{"product_id":22,"name":"秋冬棉衣","quantity":"0","price":"0","image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg"}]}]}}
      */
     public function goodsList(Request $request){
         //参数校验

@@ -35,3 +35,8 @@ Route::get('/address/setDefault', 'Api\AddressController@setDefaultAddress');
 //用户
 Route::get('/user/info', 'Api\UserController@userInfo');
 Route::post('/user/update', 'Api\UserController@updateUser');
+
+//订单
+Route::get('/order/list', 'Api\OrderController@orderList');
+Route::post('/order/create', 'Api\OrderController@createOrder');
+Route::get('/order/cancel', 'Api\OrderController@cancelOrder');
