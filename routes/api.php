@@ -39,4 +39,5 @@ Route::post('/user/update', 'Api\UserController@updateUser');
 //订单
 Route::get('/order/list', 'Api\OrderController@orderList');
 Route::post('/order/create', 'Api\OrderController@createOrder');
-Route::get('/order/cancel', 'Api\OrderController@cancelOrder');
+Route::get('/order/setStatus', 'Api\OrderController@setOrderStatus');
+Route::get('/order/delete', 'Api\OrderController@deleteOrder');

@@ -142,22 +142,22 @@ class Order extends Model
      * 设置订单状态
      *
      * @author 邹柯
-     * @param $order_id int 是 订单id
+     * @param $order_ids string 是 订单id列表,多个订单id用,分隔开
      * @param $status int 是 订单状态:2-取消订单、4-确认收货
      * @return int
      */
-    public static function setOrderStatus($order_id,$status){
-        return DB::table('orders')->where('increment_id',$order_id)->update(['status'=>$status]);
+    public static function setOrderStatus($order_ids,$status){
+        return DB::table('orders')->whereIn('increment_id',$order_ids)->update(['status'=>$status]);
     }
 
     /**
      * 删除订单
      *
      * @author 邹柯
-     * @param $order_id int 是 订单id
+     * @param $order_ids string 是 订单id列表,多个订单id用,分隔开
      * @return int
      */
-    public static function deleteOrder($order_id){
-        return DB::table('orders')->where('increment_id',$order_id)->update(['is_deleted'=>1]);
+    public static function deleteOrder($order_ids){
+        return DB::table('orders')->whereIn('increment_id',$order_ids)->update(['is_deleted'=>1]);
     }
 }

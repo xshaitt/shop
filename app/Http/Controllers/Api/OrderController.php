@@ -135,20 +135,24 @@ class OrderController extends Controller
 
 
     /**
-     * @title 取消订单
-     * @desc  {"0":"接口地址：/api/order/cancel","1":"请求方式：GET","2":"开发者: 邹柯"}
-     * @param {"name":"order_id","type":"int","required":true,"desc":"订单id","level":1}
+     * @title 取消订单或确认收货
+     * @desc  {"0":"接口地址：/api/order/setStatus","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"order_ids","type":"string","required":true,"desc":"订单id列表,多个订单id之间用,号分隔开","level":1}
+     * @param {"name":"status","type":"int","required":true,"desc":"订单状态:2-取消订单、4-确认收货","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"int","required":true,"desc":"取消成功的记录数","level":1}
+     * @return {"name":"data","type":"int","required":true,"desc":"取消订单或确认收货成功的记录数","level":1}
      * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
      */
-    public function cancelOrder(Request $request){
+    public function setOrderStatus(Request $request){
         //参数校验
         $messages = [
-            'order_id.required'            => 41014,
+            'order_ids.required'  => 41015,
+            'status.required'     => 41016,
+            'status.in'           => 42012,
         ];
         $validator = Validator::make($request->all(), [
-            'order_id'           => 'required',
+            'order_ids'           => 'required',
+            'status'              => 'required|in:0,1',
         ],$messages);
 
         if ($validator->fails()) {
@@ -159,7 +163,38 @@ class OrderController extends Controller
         $data = $request->input();
 
         //取消收订单
-        $result = Order::cancelOrder($data['order_id']);
+        $result = Order::setOrderStatus($data['order_ids'],$data['status']);
+
+        return ApiService::success($result);
+    }
+
+
+    /**
+     * @title 删除订单
+     * @desc  {"0":"接口地址：/api/order/delete","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"order_ids","type":"string","required":true,"desc":"订单id列表,多个订单id之间用,号分隔开","level":1}
+     * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
+     * @return {"name":"data","type":"int","required":true,"desc":"删除成功的记录数","level":1}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
+     */
+    public function deleteOrder(Request $request){
+        //参数校验
+        $messages = [
+            'order_ids.required'  => 41015,
+        ];
+        $validator = Validator::make($request->all(), [
+            'order_ids'           => 'required',
+        ],$messages);
+
+        if ($validator->fails()) {
+            return ApiService::error($validator->errors()->first());
+        }
+
+        //获取接收参数
+        $data = $request->input();
+
+        //取消收订单
+        $result = Order::deleteOrder($data['order_ids']);
 
         return ApiService::success($result);
     }

@@ -29,6 +29,8 @@ return [
             '41012' => 'date_of_birth不能为空!',
             '41013' => 'email不能为空!',
             '41014' => 'product_collection_id不能为空!',
+            '41015' => 'order_ids不能为空!',
+            '41016' => 'status不能为空!',
 
             '42001' => 'seller_id必须是整形!',
             '42002' => 'product_id必须是整形!',
@@ -41,6 +43,7 @@ return [
             '42009' => 'email格式不正确!',
             '42010' => 'product_collection_id必须是整数!',
             '42011' => 'status必须是0-4的整数!',
+            '42012' => 'status必须是0或1的整数!',
         ]
     ]
 ];
