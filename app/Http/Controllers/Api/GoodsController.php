@@ -67,35 +67,30 @@ class GoodsController extends Controller
         if(!empty($result['result'])){
             $product_ids = array_column($result['result'],'product_id');
             //根据商品id获取商品图片
-            $product_image_info = Goods::getGoodsImageByProductIds($product_ids);
-            if(!empty($product_image_info)){
-                foreach($product_image_info as $k=>$v){
-                    $product_image[$v['product_id']] = $v['image_paths'];
+            $product_image = Goods::getGoodsImageByProductIds($product_ids);
+            //根据商品id获取商品的分类
+            $category_info = Goods::getGoodsCategoryByProductIds($product_ids);
+            if(!empty($category_info)) {
+                foreach ($category_info as $k => $v) {
+                    $cate[$v['product_id']] = $v['name'];
                 }
             }
 
-        }
-
-
-        //根据商品id获取商品的分类
-        $category_info = Goods::getGoodsCategoryByProductIds($product_ids);
-        if(!empty($category_info)) {
-            foreach ($category_info as $k => $v) {
-                $cate[$v['product_id']] = $v['name'];
-            }
-        }
-
-
-        //组装数据
-        if(!empty($result['result'])){
             foreach($result['result'] as $k=>$v){
+                $image_paths = isset($product_image[$v['product_id']])? $product_image[$v['product_id']] : null;
+                if(!empty($image_paths)){
+                    $image_path = explode(",",$image_paths)[0];
+                }else{
+                    $image_path = null;
+                }
                 $result['result'][$k]['category_name'] = isset($cate[$v['product_id']]) ? $cate[$v['product_id']] : null;
-                $result['result'][$k]['image_paths'] = isset($product_image[$v['product_id']]) ? $product_image[$v['product_id']] : null;
+                $result['result'][$k]['image_paths'] = $image_path;
             }
             //按分类进行分组
             $res = array_to_group('category_name',$result['result']);
+        }else{
+            $res = [];
         }
-
 
         return ApiService::success(['page'=>$result['page'],'page_size'=>$result['page_size'],'total_page_sizes'=>$result['total_page_sizes'],'result'=>$res]);
     }
@@ -146,12 +141,15 @@ class GoodsController extends Controller
         $product_attribute_id = $data['product_attribute_id'];
 
         //获取商品详情
-        $detail = Goods::getGoodsDetail([$product_id],'zh-cn');
+        $detail = Goods::getGoodsDetail([$product_id],[$product_attribute_id],'zh-cn');
+        unset($detail[0]['id']);
+        unset($detail[0]['status']);
+        unset($detail[0]['parent_id']);
         unset($detail[0]['name']);
         unset($detail[0]['price']);
         $result = $detail[0];
         //获取商品属性
-        $result['attributes'] = Goods::getGoodsSkuAttribute($product_id,$product_attribute_id);
+        $result['attributes'] = Goods::getGoodsAttributesByProductId($product_id,$product_attribute_id,'zh-cn');
 
         return ApiService::success($result);
     }

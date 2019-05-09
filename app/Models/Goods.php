@@ -55,36 +55,42 @@ class Goods extends Model
     /**
      * 获取商品详情
      *
+     * @author 邹柯
+     * @param $product_ids int 是 商品id列表
      * @param $product_attribute_ids int 是 商品属性id列表
      * @param string $locale string 是 本地化
      * @return array
      */
-    public static function getGoodsDetail($product_attribute_ids,$product_ids,$locale = 'zh-cn'){
-        $result = Db::table('product_flat')->addSelect(['name','price','parent_id','description','new','featured','status','visible_individually'])
-            ->whereIn('id',$product_attribute_ids)
-            ->where('locale','=',$locale)->get();
+    public static function getGoodsDetail($product_ids,$product_attribute_ids,$locale = 'zh-cn'){
+        $result = self::getGoodsAttributes($product_attribute_ids);
         if(!empty($result)){
-            $result = object_to_array($result);
-            //获取商品图片
-            $result_p = Db::table('product_flat')->addSelect(['product_id','description','new','featured','visible_individually'])
-                ->whereIn('product_id',$product_ids)
-                ->where('locale','=',$locale)->get();
-            foreach($result_p as $k=>$v){
-                $res[$v['product_id']] = $v;
+            //获取商品信息
+            $result_product = self::getGoodsByProductIds($product_ids,$locale);
+            foreach($result_product as $k=>$v){
+                $product_info = $v;
+                unset($product_info['id']);
+                $p[$v['id']] = $product_info;
             }
-            $product_images = Goods::getGoodsImageByProductIds($product_ids);
+            //获取商品图片
+            $product_images = self::getGoodsImageByProductIds($product_ids);
+            //根据上级id获取商品id
+            $switch_res = self::getProductIdByParentId(array_unique(array_column($result,'parent_id')));
             if(!empty($product_images)){
-                foreach($product_images as $k=>$v){
-                    $p_imgs[$v['product_id']] = $v['image_paths'];
-                }
-
                 foreach($result as $k=>$v){
-                    $result[$k]['image_paths'] = isset($p_imgs[$v['product_id']])? $p_imgs[$v['product_id']] : null;
-                    $result[$k]['image_paths'] = $res[$v['product_id']]['description'];
+                    $result[$k]['image_paths'] = isset($product_images[$switch_res[$v['parent_id']]])? $product_images[$switch_res[$v['parent_id']]] : null;
+                    $result[$k]['description'] = $p[$v['parent_id']]['description'];
+                    $result[$k]['new'] = $p[$v['parent_id']]['new'];
+                    $result[$k]['featured'] = $p[$v['parent_id']]['featured'];
+                    $result[$k]['visible_individually'] = $p[$v['parent_id']]['visible_individually'];
+                    $result[$k]['product_id'] = $p[$v['parent_id']]['product_id'];
                 }
             }else{
                 foreach($result as $k=>$v){
                     $result[$k]['image_paths'] = null;
+                    $result[$k]['description'] = $p[$v['parent_id']]['description'];
+                    $result[$k]['new'] = $p[$v['parent_id']]['new'];
+                    $result[$k]['featured'] = $p[$v['parent_id']]['featured'];
+                    $result[$k]['visible_individually'] = $p[$v['parent_id']]['visible_individually'];
                 }
             }
             return $result;
@@ -94,14 +100,77 @@ class Goods extends Model
     }
 
     /**
-     * 获取商品sku属性
+     * 根据上级id获取商品id
+     * @param $parent_ids
+     * @return array
+     */
+    private static function getProductIdByParentId($parent_ids){
+        $result = Db::table('product_flat')->addSelect(['id','product_id'])
+            ->whereIn('id',$parent_ids)->get();
+
+        if(!empty($result)){
+            $result = object_to_array($result);
+            foreach($result as $k=>$v){
+                 $res[$v['id']] = $v['product_id'];
+            }
+        }else{
+            $res = [];
+        }
+
+        return $res;
+    }
+
+
+    /**
+     * 根据商品id获取商品的其他信息
+     *
+     * @author 邹柯
+     * @param $product_ids string 是 商品id列表
+     * @param string $locale
+     * @return array|\Illuminate\Support\Collection
+     */
+    private static function getGoodsByProductIds($product_ids,$locale = 'zh-cn'){
+        $result = Db::table('product_flat')->addSelect(['id','product_id','description','new','featured','visible_individually'])
+            ->whereIn('product_id',$product_ids)
+            ->where('locale','=',$locale)->get();
+
+        if(!empty($result)){
+            $result = object_to_array($result);
+        }else{
+            $result = [];
+        }
+
+        return $result;
+    }
+
+    /**
+     * 根据商品属性id获取商品属性信息
+     *
+     * @author 邹柯
+     * @param $product_attribute_ids
+     * @return array|\Illuminate\Support\Collection
+     */
+    private static function getGoodsAttributes($product_attribute_ids){
+        $result = Db::table('product_flat')->addSelect(['id','name','price','status','parent_id'])
+            ->whereIn('id',$product_attribute_ids)->get();
+
+        if(!empty($result)){
+            $result = object_to_array($result);
+        }else{
+            $result = [];
+        }
+        return $result;
+    }
+
+    /**
+     * 根据商品id获取商品属性
      *
      * @author 邹柯
      * @param $product_id int 是 商品id
      * @param $locale string 是 本地化
      * @return mixed
      */
-    public static function getGoodsSkuAttribute($product_id,$product_attribute_id = null,$locale = 'zh-cn'){
+    public static function getGoodsAttributesByProductId($product_id,$product_attribute_id = null,$locale = 'zh-cn'){
         //本地化商品id
         $locate_product_id = self::getGoodsLocaleSkuId($product_id,$locale);
 
@@ -161,11 +230,13 @@ class Goods extends Model
 
         if(!empty($result)){
             $result = object_to_array($result);
+            foreach ($result as $k => $v) {
+                $p_imgs[$v['product_id']] = $v['image_paths'];
+            }
+            return $p_imgs;
         }else{
             return [];
         }
-
-        return $result;
     }
 
 
@@ -227,26 +298,26 @@ class Goods extends Model
             $result = object_to_array($result);
             $product_ids = array_unique(array_column($result,'product_id'));
             $product_attribute_ids = array_unique(array_column($result,'product_attribute_id'));
-            $product_detail = self::getGoodsDetail($product_attribute_ids,$product_ids,$locale);
+            $product_detail = self::getGoodsDetail($product_ids,$product_attribute_ids,$locale);
             if(!empty($product_detail)){
                 foreach($product_detail as $k=>$v){
-                    $p_detail[$v['product_id']]['name'] = $v['name'];
-                    $p_detail[$v['product_id']]['price'] = $v['price'];
-                    $p_detail[$v['product_id']]['image_paths'] = $v['image_paths'];
-                    $p_detail[$v['product_id']]['status'] = $v['status'];
+                    $p_detail[$v['id']]['name'] = $v['name'];
+                    $p_detail[$v['id']]['price'] = $v['price'];
+                    $p_detail[$v['id']]['image_paths'] = $v['image_paths'];
+                    $p_detail[$v['id']]['status'] = $v['status'];
                 }
             }
             foreach($result as $k=>$v){
-                $image_paths = isset($p_detail[$v['product_id']]['image_paths'])? $p_detail[$v['product_id']]['image_paths'] : null;
+                $image_paths = isset($p_detail[$v['product_attribute_id']]['image_paths'])? $p_detail[$v['product_attribute_id']]['image_paths'] : null;
                 if(!empty($image_paths)){
                     $image_path = explode(",",$image_paths)[0];
                 }else{
                     $image_path = null;
                 }
                 $result[$k]['image_path'] = $image_path;
-                $result[$k]['name'] = isset($p_detail[$v['product_id']]['name'])?$p_detail[$v['product_id']]['name'] : null;
-                $result[$k]['price'] = isset($p_detail[$v['product_id']]['price'])? $p_detail[$v['product_id']]['price'] : null;
-                $result[$k]['status'] = isset($p_detail[$v['product_id']]['status'])? $p_detail[$v['product_id']]['status'] : null;
+                $result[$k]['name'] = isset($p_detail[$v['product_attribute_id']]['name'])?$p_detail[$v['product_attribute_id']]['name'] : null;
+                $result[$k]['price'] = isset($p_detail[$v['product_attribute_id']]['price'])? $p_detail[$v['product_attribute_id']]['price'] : null;
+                $result[$k]['status'] = isset($p_detail[$v['product_attribute_id']]['status'])? $p_detail[$v['product_attribute_id']]['status'] : null;
             }
         }else{
             $result = [];
