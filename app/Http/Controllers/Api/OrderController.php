@@ -77,8 +77,12 @@ class OrderController extends Controller
     /**
      * @title 创建订单
      * @desc  {"0":"接口地址：/api/order/create","1":"请求方式：POST","2":"开发者: 邹柯"}
-     * @param {"name":"product_id","type":"int","required":true,"desc":"商品id","level":1}
-     * @param {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":1}
+     * @param {"name":"seller_id","type":"int","required":true,"desc":"店铺id","level":1}
+     * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id","level":1}
+     * @param {"name":"address_id","type":"int","required":true,"desc":"收货地址id","level":1}
+     * @param {"name":"cart_id","type":"int","required":true,"desc":"购物车id","level":1}
+     * @param {"name":"coupon_code","type":"string","required":false,"desc":"优惠券码","level":1}
+     * @param {"name":"product","type":"json","required":true,"desc":"商品信息[{'product_id':22,'product_attribute_id':46,'qty_ordered':1},{'product_id':22,'product_attribute_id':48,'qty_ordered':1}]","level":2}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
      * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":2}
@@ -100,30 +104,57 @@ class OrderController extends Controller
     public function createOrder(Request $request){
         //参数校验
         $messages = [
-            'product_id.required'            => 41002,
-            'product_id.numeric'             => 42002,
-            'product_attribute_id.required'  => 41003,
-            'product_attribute_id.numeric'   => 42003,
+            'seller_id.required'             => 41001,
+            'seller_id.numeric'              => 42001,
+            'customer_id.required'           => 41010,
+            'customer_id.numeric'            => 42006,
+            'cart_id.required'               => 41020,
+            'cart_id.numeric'                => 42015,
+            'address_id.required'            => 41004,
+            'address_id.numeric'             => 42004,
+            'product.required'               => 41018,
         ];
         $validator = Validator::make($request->all(), [
-            'product_id'           => 'required|numeric',
-            'product_attribute_id' => 'required|numeric',
+            'seller_id'            => 'bail|required|numeric',
+            'customer_id'          => 'bail|required|numeric',
+            'address_id'           => 'bail|required|numeric',
+            'product'              => 'bail|required',
         ],$messages);
+
+        //获取接收参数
+        $data = $request->input();
+        $coupon_code = isset($data['coupon_code']) ? $data['coupon_code'] : null;
+        if(json_decode($data['product']) == ""){
+            return ApiService::error(42013);
+        }
+
+        $product = json_decode($data['product'],true);
+        if(empty($product)){
+            return ApiService::error(41018);
+        }
+        foreach($product as $k=>$v){
+            if(empty($v['product_id'])){
+                return ApiService::error(41002);
+            }
+            if(empty($v['qty_ordered'])){
+                return ApiService::error(41019);
+            }
+            if(!is_numeric($v['product_id'])){
+                return ApiService::error(42002);
+            }
+            if(!is_numeric($v['qty_ordered'])){
+                return ApiService::error(42014);
+            }
+        }
 
         if ($validator->fails()) {
             return ApiService::error($validator->errors()->first());
         }
 
-        //获取接收参数
-        $data = $request->input();
-        $product_id = $data['product_id'];
-        $product_attribute_id = $data['product_attribute_id'];
-
+        //生成订单号
+        $order_id = createOrderNo();
         //获取商品详情
-        $detail = Goods::getGoodsDetail([$product_id],[$product_attribute_id],'zh-cn');
-        $result = $detail[0];
-        //获取商品属性
-        $result['attributes'] = Goods::getGoodsAttributesByProductId($product_id,$product_attribute_id,'zh-cn');
+        $result = Order::createOrder($order_id,$data['seller_id'],$data['customer_id'],$data['address_id'],$coupon_code,$data['cart_id'],$product);
 
         return ApiService::success($result);
     }
@@ -190,6 +221,37 @@ class OrderController extends Controller
 
         //取消收订单
         $result = Order::deleteOrder($data['order_ids']);
+
+        return ApiService::success($result);
+    }
+
+
+    /**
+     * @title 订单详情
+     * @desc  {"0":"接口地址：/api/order/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"order_id","type":"int","required":true,"desc":"订单id","level":1}
+     * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
+     * @return {"name":"data","type":"int","required":true,"desc":"删除成功的记录数","level":1}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
+     */
+    public function orderDetail(Request $request){
+        //参数校验
+        $messages = [
+            'order_id.required'  => 41017,
+        ];
+        $validator = Validator::make($request->all(), [
+            'order_id'           => 'required',
+        ],$messages);
+
+        if ($validator->fails()) {
+            return ApiService::error($validator->errors()->first());
+        }
+
+        //获取接收参数
+        $data = $request->input();
+
+        //取消收订单
+        $result = Order::getOrderDeatil($data['order_id']);
 
         return ApiService::success($result);
     }

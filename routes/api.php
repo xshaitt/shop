@@ -42,3 +42,4 @@ Route::get('/order/list', 'Api\OrderController@orderList');
 Route::post('/order/create', 'Api\OrderController@createOrder');
 Route::get('/order/setStatus', 'Api\OrderController@setOrderStatus');
 Route::get('/order/delete', 'Api\OrderController@deleteOrder');
+Route::get('/order/detail', 'Api\OrderController@orderDetail');

@@ -93,3 +93,26 @@ function array_to_group($group_field,$data){
 
     return $result;
 }
+
+
+/**
+ * 生成订单号
+ *
+ * @author 邹柯
+ * @return string
+ */
+function createOrderNo() {
+    return date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 6);
+}
+
+
+/**
+ * 判断是否是json
+ *
+ * @author 邹柯
+ * @param $str
+ * @return bool
+ */
+function is_not_json($str){
+    return is_null(json_decode($str));
+}

@@ -104,7 +104,7 @@ class Goods extends Model
      * @param $parent_ids
      * @return array
      */
-    private static function getProductIdByParentId($parent_ids){
+    public static function getProductIdByParentId($parent_ids){
         $result = Db::table('product_flat')->addSelect(['id','product_id'])
             ->whereIn('id',$parent_ids)->get();
 
@@ -150,8 +150,8 @@ class Goods extends Model
      * @param $product_attribute_ids
      * @return array|\Illuminate\Support\Collection
      */
-    private static function getGoodsAttributes($product_attribute_ids){
-        $result = Db::table('product_flat')->addSelect(['id','name','price','status','parent_id'])
+    public static function getGoodsAttributes($product_attribute_ids){
+        $result = Db::table('product_flat')->addSelect(['id','name','price','status','parent_id','channel'])
             ->whereIn('id',$product_attribute_ids)->get();
 
         if(!empty($result)){

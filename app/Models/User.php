@@ -21,8 +21,9 @@ class User extends Model
      * @return array|Model|\Illuminate\Database\Query\Builder|object|null
      */
     public static function getUser($customer_id){
-        $result = (array)Db::table('customers')->addSelect(['first_name','last_name','gender','date_of_birth','email','phone'])
-            ->where('id','=',$customer_id)->first();
+        $result = (array)Db::table('customers as c')->addSelect(['c.first_name','c.last_name','c.gender','c.date_of_birth','c.email','c.phone','cg.name as customer_type'])
+            ->leftJoin('customer_groups as cg','c.customer_group_id','=','cg.id')
+            ->where('c.id','=',$customer_id)->first();
 
         return $result;
     }

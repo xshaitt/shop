@@ -56,7 +56,7 @@ class Address extends Model
      * @return array|Model|\Illuminate\Database\Query\Builder|object|null
      */
     public static function getAddressDetail($address_id){
-        $result = (array)Db::table('customer_addresses')->addSelect(['customer_id','address1','country','state','city','postcode','phone','default_address'])
+        $result = (array)Db::table('customer_addresses')->addSelect(['customer_id','address1','address2','country','state','city','postcode','phone','default_address'])
             ->where('id','=',$address_id)->first();
 
         return $result;

@@ -31,6 +31,10 @@ return [
             '41014' => 'product_collection_id不能为空!',
             '41015' => 'order_ids不能为空!',
             '41016' => 'status不能为空!',
+            '41017' => 'order_id不能为空!',
+            '41018' => 'product不能为空!',
+            '41019' => 'qty_ordered不能为空!',
+            '41020' => 'cart_id不能为空!',
 
             '42001' => 'seller_id必须是整形!',
             '42002' => 'product_id必须是整形!',
@@ -44,6 +48,9 @@ return [
             '42010' => 'product_collection_id必须是整数!',
             '42011' => 'status必须是0-4的整数!',
             '42012' => 'status必须是0或1的整数!',
+            '42013' => 'product必须是json!',
+            '42014' => 'qty_ordered必须是整数!',
+            '42015' => 'cart_id必须是整数!',
         ]
     ]
 ];

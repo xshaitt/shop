@@ -94,47 +94,127 @@ class Order extends Model
      *
      * @author 邹柯
      * @param $customer_id int 是 客户id
-     * @param $country string 是 国家
-     * @param $state string 是 省/州
-     * @param $city string 是 城市
-     * @param $address1 string 是 街道地址
-     * @param $postcode string 是 邮政编码
-     * @param $default_address int 是 是否默认:1是、0否
-     * @return boolean
+     * @param $seller_id int 是 店铺id
+     * @param $order_id string 是 订单id
+     * @param $product array 是 商品信息
+     * @return bool
      */
-    public static function createAddress($customer_id,$country,$state = "",$city = "",$address1 = "",$postcode = 0,$phone = "",$default_address = null){
-        $count = Db::table('customer_addresses')->where([
-            ['customer_id','=',$customer_id]
-        ])->count();
-        $address_info = (array)Db::table('customer_addresses')->addSelect(['id','default_address'])->where([
-            ['customer_id','=',$customer_id],
-            ['default_address','=',1],
-        ])->first();
+    public static function createOrder($order_id,$seller_id,$customer_id,$address_id,$coupon_code,$cart_id,$product){
+        $goods_sku_info = self::getOrderGoods($product);
+        //获取收货地址信息
+        $address_info = Address::getAddressDetail($address_id);
+        //获取客户信息
+        $customer_info = User::getUser($customer_id);
+        //获取渠道信息
+        $channel_info = Channel::getChannel();
+        //根据购物车id获取快递信息
+        $shipping_info = Cart::getShipping($cart_id);
+        //订单收货地址信息入库
+//        self::addOrderAddress($address_info,$customer_info,$order_id,$customer_id);
+        //订单信息入库
+        self::addOrder($customer_info,$seller_id,$customer_id,$order_id,$coupon_code,$product,$channel_info,$shipping_info);
+        return $goods_sku_info;
+    }
 
-        if($count == 0){
-            if($default_address== null){
-                $default_address = 1;
-            }else{
-                $default_address = 0;
-            }
-        }else{
-            if($default_address == null){
-                $default_address = 0;
-            }else{
-                if(!empty($address_info) && $default_address == 1){
-                    Db::table('customer_addresses')->where('id','=',$address_info['id'])->update(
-                        ['default_address'=>0]
-                    );
-                }
-            }
+    /**
+     * 订单入库
+     *
+     * @author 邹柯
+     * @param $customer_info array 是 客户信息
+     * @param $seller_id int 是 店铺id
+     * @param $customer_id int 是 客户id
+     * @param $order_id string 是 订单id
+     * @param $product array 商品信息
+     * @return bool
+     */
+    public static function addOrder($customer_info,$seller_id,$customer_id,$order_id,$coupon_code,$product,$channel_info,$shipping_info){
+        $total_item_count = count(array_unique(array_column($product,'product_id')));
+        $total_qty_ordered = array_sum(array_column($product,'qty_ordered'));
+        $time = date("y-m-d H:i:s");
+        return Db::table('orders')->insert([
+            'increment_id'=>$order_id,
+            'status'=>1,
+            'channel_id'=>$channel_info['id'],
+            'channel_name'=>$channel_info['channel_name'],
+            'channel_type'=>$channel_info['channel_code'],
+            'is_guest'=>0,
+            'customer_email'=>$customer_info['email'],
+            'customer_first_name'=>$customer_info['first_name'],
+            'customer_last_name'=>$customer_info['last_name'],
+            'shipping_method'=>$shipping_info['method'],
+            'shipping_title'=>$shipping_info['method_title'],
+            'shipping_description'=>$shipping_info['method_description'],
+            'coupon_code'=>$coupon_code,
+            'is_gift'=>0,
+            'total_item_count'=>$total_item_count,
+            'total_qty_ordered'=>$total_qty_ordered,
+            'base_currency_code'=>$channel_info['currency_code'],
+            'customer_id'=>$customer_id,
+            'customer_type'=>$customer_info['type'],
+            'created_at'=>$time,
+            'updated_at'=>$time,
+            'seller_id'=>$seller_id
+        ]);
+    }
+
+    /**
+     * 获取订单商品信息
+     *
+     * @author 邹柯
+     * @param $product array 是 商品信息
+     * @return array|\Illuminate\Support\Collection
+     */
+    private static function getOrderGoods($product){
+        $product_attribute_ids = array_unique(array_column($product,'product_attribute_id'));
+        //获取商品sku信息
+        $goods_sku_info = Goods::getGoodsAttributes($product_attribute_ids);
+        //根据上级id获取商品id
+        $goods_info = Goods::getProductIdByParentId(array_unique(array_column($goods_sku_info,'parent_id')));
+
+        //获取商品图片
+        $product_images = Goods::getGoodsImageByProductIds(array_values($goods_info));
+        foreach($product_images as $k=>$v){
+            $product_images[$k] = explode(",",$v)[0];
         }
 
-        $time = date("Y-m-d H:i:s");
-        $result = Db::table('customer_addresses')->insert(
-            ['customer_id'=>$customer_id,'country'=>$country,'state'=>$state,'city'=>$city,'address1'=>$address1,'postcode'=>$postcode,'phone'=>$phone,'default_address'=>$default_address,'created_at'=>$time,'updated_at'=>$time]
-        );
+        //组装数据
+        foreach($goods_sku_info as $k=>$v){
+            $goods_sku_info[$k]['image_path'] = $product_images[$goods_info[$v['parent_id']]];
+        }
 
-        return $result;
+        return $goods_sku_info;
+    }
+
+
+    /**
+     * 订单收货地址信息入库
+     *
+     * @author 邹柯
+     * @param $address_info array 是 收货地址信息
+     * @param $order_id string 是 订单id
+     * @param $customer_id int 是 客户id
+     * @return bool
+     */
+    private static function addOrderAddress($address_info,$customer_info,$order_id,$customer_id){
+        $time = date("y-m-d H:i:s");
+        //订单收货地址入库
+        return Db::table('order_address')->insert([
+            'first_name'=>$customer_info['first_name'],
+            'last_name'=>$customer_info['last_name'],
+            'email'=>$customer_info['email'],
+            'address1'=>$address_info['address1'],
+            'address2'=>$address_info['address2'],
+            'country'=>$address_info['country'],
+            'state'=>$address_info['state'],
+            'city'=>$address_info['city'],
+            'postcode'=>$address_info['postcode'],
+            'phone'=>$address_info['phone'],
+            'address_type'=>"",
+            'order_id'=>$order_id,
+            'customer_id'=>$customer_id,
+            'created_at'=>$time,
+            'updated_at'=>$time
+        ]);
     }
 
 
@@ -159,5 +239,16 @@ class Order extends Model
      */
     public static function deleteOrder($order_ids){
         return DB::table('orders')->whereIn('increment_id',$order_ids)->update(['is_deleted'=>1]);
+    }
+
+    /**
+     * 订单详情
+     *
+     * @author 邹柯
+     * @param $order_id int 是 订单id
+     * @return array|null
+     */
+    public static function getOrderDeatil($order_id){
+        return null;
     }
 }
