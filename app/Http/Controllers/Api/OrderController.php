@@ -121,11 +121,6 @@ class OrderController extends Controller
 
         //获取商品详情
         $detail = Goods::getGoodsDetail([$product_id],[$product_attribute_id],'zh-cn');
-        unset($detail[0]['id']);
-        unset($detail[0]['status']);
-        unset($detail[0]['parent_id']);
-        unset($detail[0]['name']);
-        unset($detail[0]['price']);
         $result = $detail[0];
         //获取商品属性
         $result['attributes'] = Goods::getGoodsAttributesByProductId($product_id,$product_attribute_id,'zh-cn');

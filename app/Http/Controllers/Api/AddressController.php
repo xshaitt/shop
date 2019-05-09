@@ -18,6 +18,7 @@ class AddressController extends Controller
     /**
      * @title 收货地址列表
      * @desc  {"0":"接口地址：/api/address/list","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id","level":1}
      * @param {"name":"page","type":"int","required":false,"desc":"页码,不传默认1","level":1}
      * @param {"name":"page_size","type":"int","required":false,"desc":"每页显示条数，不传默认5","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
@@ -36,10 +37,12 @@ class AddressController extends Controller
         $messages = [
             'page.numeric'        => 40001,
             'page_size.numeric'   => 40002,
+            'customer_id.required'=> 41010,
         ];
         $validator = Validator::make($request->all(), [
             'page'      => 'bail|nullable|numeric',
             'page_size' => 'bail|nullable|numeric',
+            'customer_id' => 'bail|required|numeric',
         ],$messages);
         
         if ($validator->fails()) {
@@ -50,7 +53,7 @@ class AddressController extends Controller
         $data = $request->input();
         $page = empty($data['page']) ? 1: $data['page'];
         $page_size = empty($data['page_size']) ? 5: $data['page_size'];
-        $customer_id = 2;
+        $customer_id = $data['customer_id'];
 
         //获取收货地址列表
         $result = Address::getAddressList($customer_id,$page,$page_size);
@@ -98,6 +101,43 @@ class AddressController extends Controller
         return ApiService::success($result);
     }
 
+    /**
+     * @title 默认收货地址
+     * @desc  {"0":"接口地址：/api/address/default","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"customer_id","type":"int","required":true,"desc":"客户id","level":1}
+     * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
+     * @return {"name":"customer_id","type":"int","required":true,"desc":"客户id","level":2}
+     * @return {"name":"country","type":"string","required":true,"desc":"国家","level":2}
+     * @return {"name":"state","type":"string","required":true,"desc":"省/州","level":2}
+     * @return {"name":"city","type":"string","required":true,"desc":"城市","level":2}
+     * @return {"name":"address1","type":"string","required":true,"desc":"街道地址","level":2}
+     * @return {"name":"postcode","type":"string","required":false,"desc":"邮政编码","level":2}
+     * @return {"name":"phone","type":"string","required":true,"desc":"电话","level":2}
+     * @return {"name":"default_address","type":"string","required":true,"desc":"是否默认地址:1是、0否","level":2}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"customer_id":2,"address1":"宝山区和家欣苑A区5栋101","country":"CN","state":"上海市","city":"上海市","postcode":233700,"phone":"17721355485","default_address":1}}
+     */
+    public function addressDefault(Request $request){
+        //参数校验
+        $messages = [
+            'customer_id.required'=> 41010,
+        ];
+        $validator = Validator::make($request->all(), [
+            'customer_id' => 'bail|required|numeric',
+        ],$messages);
+
+        if ($validator->fails()) {
+            return ApiService::error($validator->errors()->first());
+        }
+
+        //获取接收参数
+        $data = $request->input();
+        $customer_id = $data['customer_id'];
+        //获取默认收货地址
+        $result = Address::getAddressDefault($customer_id);
+
+        return ApiService::success($result);
+    }
 
     /**
      * @title 国家列表

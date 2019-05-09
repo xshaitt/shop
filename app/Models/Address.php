@@ -25,11 +25,11 @@ class Address extends Model
     public static function getAddressList($customer_id,$page,$page_size){
         $offset = ($page - 1) * $page_size;
         //总记录数
-        $count = Db::table('customer_addresseses')->where('customer_id','=',$customer_id)->count();
+        $count = Db::table('customer_addresses')->where('customer_id','=',$customer_id)->count();
         //总页数
         $total_page_sizes = ceil($count/$page_size);
 
-        $result = Db::table('customer_addresseses as ca')->addSelect(['ca.id as address_id','ca.customer_id','ca.address1','ca.country','ca.state','ca.city','ca.postcode','ca.phone','ca.default_address','c.first_name','c.last_name'])
+        $result = Db::table('customer_addresses as ca')->addSelect(['ca.id as address_id','ca.customer_id','ca.address1','ca.country','ca.state','ca.city','ca.postcode','ca.phone','ca.default_address','c.first_name','c.last_name'])
             ->leftJoin('customers as c','ca.customer_id','=','c.id')
             ->where('customer_id','=',$customer_id)->offset($offset)->limit($page_size)->orderBy('default_address','DESC')->get();
 
@@ -56,12 +56,25 @@ class Address extends Model
      * @return array|Model|\Illuminate\Database\Query\Builder|object|null
      */
     public static function getAddressDetail($address_id){
-        $result = Db::table('customer_addresseses')->addSelect(['customer_id','address1','country','state','city','postcode','phone','default_address'])
+        $result = (array)Db::table('customer_addresses')->addSelect(['customer_id','address1','country','state','city','postcode','phone','default_address'])
             ->where('id','=',$address_id)->first();
 
-        if(!empty($result)){
-            $result = (array)$result;
-        }
+        return $result;
+    }
+
+    /**
+     * 客户默认收货地址
+     *
+     * @author 邹柯
+     * @param $customer_id int 是 客户id
+     * @return array|Model|\Illuminate\Database\Query\Builder|object|null
+     */
+    public static function getAddressDefault($customer_id){
+        $result = (array)Db::table('customer_addresses')->addSelect(['customer_id','address1','country','state','city','postcode','phone','default_address'])
+            ->where([
+                ['default_address','=',1],
+                ['customer_id','=',$customer_id]
+            ])->first();
 
         return $result;
     }
