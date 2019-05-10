@@ -16,7 +16,6 @@ class Goods extends Model
     /**
      * 根据店铺id获取商品列表
      *
-     * @author 邹柯
      * @param $seller_id int 是 店铺id
      * @param $page int 是 页码
      * @param $page_size int 是 每页显示条数
@@ -57,7 +56,6 @@ class Goods extends Model
     /**
      * 获取商品详情
      *
-     * @author 邹柯
      * @param $product_ids int 是 商品id列表
      * @param $product_attribute_ids int 是 商品属性id列表
      * @param string $locale string 是 本地化
@@ -127,6 +125,7 @@ class Goods extends Model
 
     /**
      * 根据上级id获取商品id
+     *
      * @param $parent_ids
      * @return array
      */
@@ -150,7 +149,6 @@ class Goods extends Model
     /**
      * 根据商品id获取商品的其他信息
      *
-     * @author 邹柯
      * @param $product_ids string 是 商品id列表
      * @param string $locale
      * @return array|\Illuminate\Support\Collection
@@ -172,7 +170,6 @@ class Goods extends Model
     /**
      * 根据商品属性id获取商品属性信息
      *
-     * @author 邹柯
      * @param $product_attribute_ids
      * @return array|\Illuminate\Support\Collection
      */
@@ -191,7 +188,6 @@ class Goods extends Model
     /**
      * 根据商品id获取商品属性
      *
-     * @author 邹柯
      * @param $product_id int 是 商品id
      * @param $locale string 是 本地化
      * @return mixed
@@ -225,7 +221,6 @@ class Goods extends Model
     /**
      * 获取本地化商品id
      *
-     * @author 邹柯
      * @param $product_id int 是 商品id
      * @param $locale string 是 本地化
      * @return mixed
@@ -244,7 +239,6 @@ class Goods extends Model
     /**
      * 根据商品id获取商品图片
      *
-     * @author 邹柯
      * @param $product_ids array 是 商品id
      * @return mixed
      */
@@ -269,7 +263,6 @@ class Goods extends Model
     /**
      * 根据商品id获取商品的分类
      *
-     * @author 邹柯
      * @param $product_ids array 是 商品id
      * @return mixed
      */
@@ -296,7 +289,6 @@ class Goods extends Model
     /**
      * 获取商品收藏列表
      *
-     * @author 邹柯
      * @param $seller_id int 是 店铺id
      * @param $customer_id int 是 客户id
      * @param $page int 是 页码
@@ -356,7 +348,6 @@ class Goods extends Model
     /**
      * 取消商品收藏
      *
-     * @author 邹柯
      * @param $product_collection_id int 是 商品收藏id
      * @return int
      */
@@ -367,7 +358,6 @@ class Goods extends Model
     /**
      * 收藏商品
      *
-     * @author 邹柯
      * @param $seller_id int 是 店铺id
      * @param $customer_id int 是 客户id
      * @param $product_id int 是 商品id
@@ -387,7 +377,6 @@ class Goods extends Model
     /**
      * 获取订单商品信息
      *
-     * @author 邹柯
      * @param $product array 是 商品信息
      * @return array|\Illuminate\Support\Collection
      */

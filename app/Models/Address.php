@@ -16,7 +16,6 @@ class Address extends Model
     /**
      * 收货地址列表
      *
-     * @author 邹柯
      * @param $customer_id int 是 客户id
      * @param $page int 是 页码
      * @param $page_size int 是 每页显示条数
@@ -51,7 +50,6 @@ class Address extends Model
     /**
      * 收货地址详情
      *
-     * @author 邹柯
      * @param $address_id int 是 收货地址id
      * @return array|Model|\Illuminate\Database\Query\Builder|object|null
      */
@@ -65,7 +63,6 @@ class Address extends Model
     /**
      * 客户默认收货地址
      *
-     * @author 邹柯
      * @param $customer_id int 是 客户id
      * @return array|Model|\Illuminate\Database\Query\Builder|object|null
      */
@@ -83,7 +80,6 @@ class Address extends Model
     /**
      * 国家列表
      *
-     * @author 邹柯
      * @return array|Illuminate\Support\Collection
      */
     public static function getCountryList(){
@@ -99,7 +95,6 @@ class Address extends Model
     /**
      * 修改收货地址
      *
-     * @author 邹柯
      * @param $customer_id int 是 客户id
      * @param $address_id int 是 收货地址id
      * @param $country string 是 国家
@@ -138,7 +133,6 @@ class Address extends Model
     /**
      * 添加收货地址
      *
-     * @author 邹柯
      * @param $customer_id int 是 客户id
      * @param $country string 是 国家
      * @param $state string 是 省/州
@@ -187,7 +181,6 @@ class Address extends Model
     /**
      * 设置默认收货地址
      *
-     * @author 邹柯
      * @param $customer_id int 是 客户id
      * @param $address_id int 是 收货地址id
      * @param int $default_address 默认1

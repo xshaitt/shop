@@ -43,7 +43,7 @@ class Order extends Model
         $total_page_sizes = ceil($count/$page_size);
 
         if($count > 0){
-            $result = Db::table('orders')->addSelect(['id','increment_id','total_qty_ordered','grand_total'])
+            $result = Db::table('orders')->addSelect(['id','increment_id','total_qty_ordered','base_grand_total'])
                 ->whereIn('status',$status)
                 ->where([
                     ['is_deleted',0],

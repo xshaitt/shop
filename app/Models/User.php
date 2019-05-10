@@ -16,7 +16,6 @@ class User extends Model
     /**
      * 获取用户信息
      *
-     * @author 邹柯
      * @param $customer_id int 是 用户id
      * @return array|Model|\Illuminate\Database\Query\Builder|object|null
      */
@@ -31,7 +30,6 @@ class User extends Model
     /**
      * 修改用户信息
      *
-     * @author 邹柯
      * @param $customer_id int 是 用户id
      * @param $first_name string 是 用户姓名
      * @param $gender int 是 性别:1男、0女

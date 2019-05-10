@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
  */
 class Channel extends Model
 {
+    /**
+     * 获取渠道信息
+     *
+     * @return array
+     */
     public static function getChannel(){
         $result = (array)Db::table('channels as c')
             ->addSelect([
