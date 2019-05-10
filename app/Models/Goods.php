@@ -177,7 +177,7 @@ class Goods extends Model
      * @return array|\Illuminate\Support\Collection
      */
     public static function getGoodsAttributes($product_attribute_ids){
-        $result = Db::table('product_flat')->addSelect(['id','name','price','status','parent_id','channel'])
+        $result = Db::table('product_flat')->addSelect(['id','name','price','status','thumbnail','parent_id','channel'])
             ->whereIn('id',$product_attribute_ids)->get();
 
         if(!empty($result)){

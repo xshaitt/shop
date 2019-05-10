@@ -16,7 +16,6 @@ class Order extends Model
     /**
      * 我的订单列表
      *
-     * @author 邹柯
      * @param $seller_id int 是 店铺id
      * @param $customer_id int 是 客户id
      * @param $status int 是 订单状态：0全部、1未付款、2已取消、3未发货、4已收货
@@ -44,7 +43,7 @@ class Order extends Model
         $total_page_sizes = ceil($count/$page_size);
 
         if($count > 0){
-            $result = Db::table('orders')->addSelect(['increment_id','total_qty_ordered','grand_total'])
+            $result = Db::table('orders')->addSelect(['id','increment_id','total_qty_ordered','grand_total'])
                 ->whereIn('status',$status)
                 ->where([
                     ['is_deleted',0],
@@ -53,12 +52,11 @@ class Order extends Model
                 ])->offset($offset)->limit($page_size)->orderBy('id','DESC')->get();
 
             $result = object_to_array($result);
-            $order_ids = array_column($result,'increment_id');
+            $order_ids = array_column($result,'id');
             //根据订单id获取商品id列表
             $product_ids = self::getGoodsIdsByOrderIds($order_ids);
             //根据商品id获取商品信息
             $goods_detail = Goods::getGoodsAttributes($product_ids);
-            print_r($goods_detail);die;
         }else{
             $result = [];
         }
@@ -71,12 +69,11 @@ class Order extends Model
     /**
      * 根据订单id获取商品id列表
      *
-     * @author 邹柯
      * @param $order_ids string 是 订单id列表
      * @return array|\Illuminate\Support\Collection
      */
     private static function getGoodsIdsByOrderIds($order_ids){
-        $result = Db::table('order_item')->addSelect(['order_id',DB::raw('group_concat(product_id) as product_ids')])
+        $result = Db::table('order_items')->addSelect(['order_id',DB::raw('group_concat(product_id) as product_ids')])
             ->whereIn('order_id',$order_ids)
             ->groupBy('order_id')
             ->get();
@@ -92,7 +89,6 @@ class Order extends Model
     /**
      * 订单入库
      *
-     * @author 邹柯
      * @param $customer_info array 是 客户信息
      * @param $seller_id int 是 店铺id
      * @param $customer_id int 是 客户id
@@ -101,10 +97,16 @@ class Order extends Model
      * @param $now_time datetime 是 入库时间
      * @return bool
      */
-    public static function addOrder($customer_info,$seller_id,$customer_id,$increment_id,$product,$channel_info,$now_time){
+    public static function addOrder($customer_info,$seller_id,$customer_id,$increment_id,$product,$channel_info,$goods_sku_info,$now_time){
         $total_item_count = count(array_unique(array_column($product,'product_id')));
         $total_qty_ordered = array_sum(array_column($product,'qty_ordered'));
-
+        foreach($goods_sku_info as $k=>$v){
+            $g[$v['id']] = $v['price'];
+        }
+        $total = 0;
+        foreach($product as $k=>$v){
+            $total += $g[$v['product_attribute_id']] * $v['qty_ordered'];
+        }
         return Db::table('orders')->insertGetId([
             'increment_id'=>$increment_id,
             'status'=>1,
@@ -123,11 +125,15 @@ class Order extends Model
             'total_item_count'=>$total_item_count,
             'total_qty_ordered'=>$total_qty_ordered,
             'base_currency_code'=>$channel_info['currency_code'],
+            'channel_currency_code'=>$channel_info['currency_code'],
+            'order_currency_code'=>$channel_info['currency_code'],
             'customer_id'=>$customer_id,
             'customer_type'=>$customer_info['customer_type'],
             'created_at'=>$now_time,
             'updated_at'=>$now_time,
-            'seller_id'=>$seller_id
+            'seller_id'=>$seller_id,
+            'base_grand_total'=>$total,
+            'base_sub_total'=>$total,
         ]);
     }
 
@@ -154,8 +160,8 @@ class Order extends Model
             $order_items[] = [
                 'name'=>$product_attribute_name,
                 'qty_ordered'=>$v['qty_ordered'],
-                'price'=>$product_attribute_price,
-                'total'=>$total,
+                'base_price'=>$product_attribute_price,
+                'base_total'=>$total,
                 'product_id'=>$v['product_attribute_id'],
                 'order_id'=>$order_id,
                 'parent_id'=>null,
@@ -171,7 +177,6 @@ class Order extends Model
     /**
      * 订单收货地址信息入库
      *
-     * @author 邹柯
      * @param $address_info array 是 收货地址信息
      * @param $order_id string 是 订单id
      * @param $customer_id int 是 客户id
@@ -203,34 +208,103 @@ class Order extends Model
     /**
      * 设置订单状态
      *
-     * @author 邹柯
      * @param $order_ids string 是 订单id列表,多个订单id用,分隔开
      * @param $status int 是 订单状态:2-取消订单、4-确认收货
      * @return int
      */
     public static function setOrderStatus($order_ids,$status){
-        return DB::table('orders')->whereIn('increment_id',$order_ids)->update(['status'=>$status]);
+        return DB::table('orders')->whereIn('id',$order_ids)->update(['status'=>$status]);
     }
 
     /**
      * 删除订单
      *
-     * @author 邹柯
      * @param $order_ids string 是 订单id列表,多个订单id用,分隔开
      * @return int
      */
     public static function deleteOrder($order_ids){
-        return DB::table('orders')->whereIn('increment_id',$order_ids)->update(['is_deleted'=>1]);
+        return DB::table('orders')->whereIn('id',$order_ids)->update(['is_deleted'=>1]);
+    }
+
+
+    /**
+     * 订单信息
+     *
+     * @param $order_id int 是 订单id
+     * @return Model|\Illuminate\Database\Query\Builder|object|null
+     */
+    public static function getOrder($order_id){
+        return (array)DB::table('orders')
+            ->addSelect([
+                'increment_id',
+                'order_currency_code',
+                'created_at as order_create_time',
+                'base_grand_total',
+                'base_sub_total',
+                'base_shipping_amount',
+                'base_discount_amount'
+            ])->where('id',$order_id)->first();
     }
 
     /**
-     * 订单详情
+     * 订单商品信息
      *
-     * @author 邹柯
      * @param $order_id int 是 订单id
-     * @return array|null
+     * @return Model|\Illuminate\Database\Query\Builder|object|null
      */
-    public static function getOrderDeatil($order_id){
-        return null;
+    public static function getOrderGoods($order_id){
+        $result = DB::table('order_items')->addSelect(['name','base_price','product_id as product_attribute_id'])->where('order_id',$order_id)->get();
+        if(!empty($result)){
+            $result = object_to_array($result);
+            $product_attribute_ids = array_unique(array_column($result,'product_attribute_id'));
+            $product_attribute_info = Goods::getGoodsAttributes($product_attribute_ids);
+            foreach($product_attribute_info as $k=>$v){
+                $img[$v['id']] = $v['thumbnail'];
+            }
+            foreach($result as $k=>$v){
+                $result[$k]['thumbnail'] = $img[$v['product_attribute_id']];
+            }
+        }else{
+            $result = [];
+        }
+
+        return $result;
+    }
+
+    /**
+     * 订单地址信息
+     *
+     * @param $order_id int 是 订单id
+     * @return array
+     */
+    public static function getOrderAddress($order_id){
+        $result = (array)DB::table('order_address')->addSelect(['first_name','last_name','phone','state','city','address1'])->where('order_id',$order_id)->first();
+        $result['phone'] = hidtel($result['phone']);
+
+        return $result;
+    }
+
+    /**
+     * 订单支付方式
+     *
+     * @param $order_id int 是 订单id
+     * @return array
+     */
+    public static function getOrderPayment($order_id){
+        $result = (array)DB::table('order_payment')->addSelect(['method_title','created_at as pay_time'])->where('order_id',$order_id)->first();
+
+        return $result;
+    }
+
+    /**
+     * 订单快递信息
+     *
+     * @param $order_id int 是 订单id
+     * @return array
+     */
+    public static function getOrderShipment($order_id){
+        $result = (array)DB::table('shipments')->addSelect(['carrier_title','track_number','updated_at as shipped_time','status'])->where('order_id',$order_id)->first();
+
+        return $result;
     }
 }

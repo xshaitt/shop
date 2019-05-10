@@ -168,7 +168,7 @@ class OrderController extends Controller
             //创建订单
             $now_time = date("y-m-d H:i:s");
             //订单信息入库
-            $id = Order::addOrder($customer_info,$seller_id,$customer_id,$increment_id,$product,$channel_info,$now_time);
+            $id = Order::addOrder($customer_info,$seller_id,$customer_id,$increment_id,$product,$channel_info,$goods_sku_info,$now_time);
             //订单收货地址信息入库
             Order::addOrderAddress($address_info,$customer_info,$id,$customer_id,$now_time);
             //订单商品信息入库
@@ -198,7 +198,7 @@ class OrderController extends Controller
         ];
         $validator = Validator::make($request->all(), [
             'order_ids'           => 'required',
-            'status'              => 'required|in:0,1',
+            'status'              => 'required|in:2,4',
         ],$messages);
 
         if ($validator->fails()) {
@@ -209,7 +209,7 @@ class OrderController extends Controller
         $data = $request->input();
 
         //取消收订单
-        $result = Order::setOrderStatus($data['order_ids'],$data['status']);
+        $result = Order::setOrderStatus([$data['order_ids']],$data['status']);
 
         return ApiService::success($result);
     }
@@ -240,7 +240,7 @@ class OrderController extends Controller
         $data = $request->input();
 
         //取消收订单
-        $result = Order::deleteOrder($data['order_ids']);
+        $result = Order::deleteOrder([$data['order_ids']]);
 
         return ApiService::success($result);
     }
@@ -251,8 +251,34 @@ class OrderController extends Controller
      * @desc  {"0":"接口地址：/api/order/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"order_id","type":"int","required":true,"desc":"订单id","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
-     * @return {"name":"data","type":"int","required":true,"desc":"删除成功的记录数","level":1}
-     * @example {"code":0,"errCode":200,"message":"加载成功","data":1}
+     * @return {"name":"data","type":"","required":true,"desc":"订单详情信息","level":1}
+     * @return {"name":"increment_id","type":"string","required":true,"desc":"订单号","level":2}
+     * @return {"name":"order_currency_code","type":"string","required":true,"desc":"货币符号","level":2}
+     * @return {"name":"order_create_time","type":"date","required":true,"desc":"订单创建时间","level":2}
+     * @return {"name":"base_grand_total","type":"string","required":true,"desc":"实付款(订单金额)","level":2}
+     * @return {"name":"base_sub_total","type":"string","required":true,"desc":"商品金额","level":2}
+     * @return {"name":"base_shipping_amount","type":"string","required":true,"desc":"运费","level":2}
+     * @return {"name":"base_discount_amount","type":"string","required":true,"desc":"优惠金额","level":2}
+     * @return {"name":"order_goods","type":"","required":true,"desc":"订单商品信息","level":2}
+     * @return {"name":"name","type":"string","required":true,"desc":"商品名称","level":3}
+     * @return {"name":"base_price","type":"string","required":true,"desc":"商品单价","level":3}
+     * @return {"name":"thumbnail","type":"string","required":true,"desc":"商品图片","level":3}
+     * @return {"name":"order_address","type":"","required":true,"desc":"订单地址信息","level":2}
+     * @return {"name":"first_name","type":"string","required":true,"desc":"姓","level":3}
+     * @return {"name":"last_name","type":"string","required":true,"desc":"名","level":3}
+     * @return {"name":"phone","type":"string","required":true,"desc":"电话","level":3}
+     * @return {"name":"state","type":"string","required":true,"desc":"省/州","level":3}
+     * @return {"name":"city","type":"string","required":true,"desc":"城市","level":3}
+     * @return {"name":"address1","type":"string","required":true,"desc":"街道详细地址","level":3}
+     * @return {"name":"order_payment","type":"","required":true,"desc":"订单支付方式","level":2}
+     * @return {"name":"method_title","type":"string","required":true,"desc":"支付方式","level":3}
+     * @return {"name":"pay_time","type":"date","required":true,"desc":"支付时间","level":3}
+     * @return {"name":"order_shipment","type":"","required":true,"desc":"配送方式信息","level":2}
+     * @return {"name":"carrier_title","type":"string","required":true,"desc":"配送方式","level":3}
+     * @return {"name":"track_number","type":"string","required":true,"desc":"快递单号","level":3}
+     * @return {"name":"shipped_time","type":"date","required":true,"desc":"发货时间","level":3}
+     * @return {"name":"status","type":"int","required":true,"desc":"快递状态:0未发货、1已发货、2确认收货","level":3}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"increment_id":"20190510162929579756","order_currency_code":"USDT","order_create_time":"2019-05-10 16:29:29","base_grand_total":"500.0000","base_sub_total":"500.0000","base_shipping_amount":"0.0000","base_discount_amount":"0.0000","order_goods":[{"name":"秋冬棉衣1","base_price":"200.0000","product_attribute_id":46,"thumbnail":null},{"name":"秋冬棉衣2","base_price":"100.0000","product_attribute_id":48,"thumbnail":null}],"order_address":{"first_name":"邹柯","last_name":"","phone":"177****5485","state":"上海市","city":"上海市","address1":"宝山区和家欣苑A区5栋101"},"order_payment":{"method_title":"在线支付","pay_time":"2019-05-10 17:15:10"},"order_shipment":{"carrier_title":"顺丰快递","track_number":"2301938465837","shipped_time":"2019-05-10 18:03:12","status":"1"}}}
      */
     public function orderDetail(Request $request){
         //参数校验
@@ -270,8 +296,16 @@ class OrderController extends Controller
         //获取接收参数
         $data = $request->input();
 
-        //取消收订单
-        $result = Order::getOrderDeatil($data['order_id']);
+        //获取订单信息
+        $result = Order::getOrder($data['order_id']);
+        //获取订单商品信息
+        $result['order_goods'] = Order::getOrderGoods($data['order_id']);
+        //获取订单地址信息
+        $result['order_address'] = Order::getOrderAddress($data['order_id']);
+        //获取订单支付方式
+        $result['order_payment'] = Order::getOrderPayment($data['order_id']);
+        //获取订单快递信息
+        $result['order_shipment'] = Order::getOrderShipment($data['order_id']);
 
         return ApiService::success($result);
     }
