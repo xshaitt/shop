@@ -53,37 +53,23 @@ class Order extends Model
 
             $result = object_to_array($result);
             $order_ids = array_column($result,'id');
-            //根据订单id获取商品id列表
-            $product_ids = self::getGoodsIdsByOrderIds($order_ids);
-            //根据商品id获取商品信息
-            $goods_detail = Goods::getGoodsAttributes($product_ids);
+            //获取订单商品信息
+            $goods_sku_info = self::getOrderGoods($order_ids);
+            //商品按订单id进行分组
+            foreach($goods_sku_info as $k=>$v){
+                $group_name = $v['order_id'];
+                unset($v['order_id']);
+                $arr[$group_name][] = $v;
+            }
+            //组装数据
+            foreach($result as $k=>$v){
+                $result[$k]['order_goods'] = $arr[$v['id']];
+            }
         }else{
             $result = [];
         }
-
-
 
         return ['page'=>$page,'page_size'=>$page_size,'total_page_sizes'=>$total_page_sizes,'result'=>$result];
-    }
-
-    /**
-     * 根据订单id获取商品id列表
-     *
-     * @param $order_ids string 是 订单id列表
-     * @return array|\Illuminate\Support\Collection
-     */
-    private static function getGoodsIdsByOrderIds($order_ids){
-        $result = Db::table('order_items')->addSelect(['order_id',DB::raw('group_concat(product_id) as product_ids')])
-            ->whereIn('order_id',$order_ids)
-            ->groupBy('order_id')
-            ->get();
-        if(!empty($result)){
-            $result = object_to_array($result);
-        }else{
-            $result = [];
-        }
-
-        return $result;
     }
 
     /**
@@ -249,11 +235,11 @@ class Order extends Model
     /**
      * 订单商品信息
      *
-     * @param $order_id int 是 订单id
+     * @param $order_ids string 是 订单id列表,多个订订单id之间用,号分隔开
      * @return Model|\Illuminate\Database\Query\Builder|object|null
      */
-    public static function getOrderGoods($order_id){
-        $result = DB::table('order_items')->addSelect(['name','base_price','product_id as product_attribute_id'])->where('order_id',$order_id)->get();
+    public static function getOrderGoods($order_ids){
+        $result = DB::table('order_items')->addSelect(['order_id','name','base_price','product_id as product_attribute_id'])->whereIn('order_id',$order_ids)->get();
         if(!empty($result)){
             $result = object_to_array($result);
             $product_attribute_ids = array_unique(array_column($result,'product_attribute_id'));

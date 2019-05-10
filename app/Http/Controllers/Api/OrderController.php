@@ -41,7 +41,7 @@ class OrderController extends Controller
      * @return {"name":"quantity","type":"int","required":true,"desc":"商品数量","level":4}
      * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":4}
      * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":4}
-     * @example
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":4,"total_page_sizes":11,"result":[{"id":107,"increment_id":"20190510162934101579","total_qty_ordered":4,"base_grand_total":"500.0000","order_goods":[{"name":"秋冬棉衣1","base_price":"200.0000","product_attribute_id":46,"thumbnail":null},{"name":"秋冬棉衣2","base_price":"100.0000","product_attribute_id":48,"thumbnail":null}]}]}}
      */
     public function orderList(Request $request){
         //参数校验
@@ -299,7 +299,7 @@ class OrderController extends Controller
         //获取订单信息
         $result = Order::getOrder($data['order_id']);
         //获取订单商品信息
-        $result['order_goods'] = Order::getOrderGoods($data['order_id']);
+        $result['order_goods'] = Order::getOrderGoods([$data['order_id']]);
         //获取订单地址信息
         $result['order_address'] = Order::getOrderAddress($data['order_id']);
         //获取订单支付方式
