@@ -99,18 +99,18 @@ class Order extends Model
      * @param $product array 是 商品信息
      * @return bool
      */
-    public static function createOrder($order_id,$seller_id,$customer_id,$address_id,$coupon_code,$cart_id,$product){
+    public static function createOrder($order_id,$seller_id,$customer_id,$address_id,$coupon_code,$cart_id,$product,$channel_info){
         $goods_sku_info = self::getOrderGoods($product);
         //获取收货地址信息
         $address_info = Address::getAddressDetail($address_id);
         //获取客户信息
         $customer_info = User::getUser($customer_id);
         //获取渠道信息
-        $channel_info = Channel::getChannel();
+//        $channel_info = Channel::getChannel();
         //根据购物车id获取快递信息
         $shipping_info = Cart::getShipping($cart_id);
         //订单收货地址信息入库
-//        self::addOrderAddress($address_info,$customer_info,$order_id,$customer_id);
+        self::addOrderAddress($address_info,$customer_info,$order_id,$customer_id);
         //订单信息入库
         self::addOrder($customer_info,$seller_id,$customer_id,$order_id,$coupon_code,$product,$channel_info,$shipping_info);
         return $goods_sku_info;

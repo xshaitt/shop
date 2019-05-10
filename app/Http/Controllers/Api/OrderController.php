@@ -154,7 +154,7 @@ class OrderController extends Controller
         //生成订单号
         $order_id = createOrderNo();
         //获取商品详情
-        $result = Order::createOrder($order_id,$data['seller_id'],$data['customer_id'],$data['address_id'],$coupon_code,$data['cart_id'],$product);
+        $result = Order::createOrder($order_id,$data['seller_id'],$data['customer_id'],$data['address_id'],$coupon_code,$data['cart_id'],$product,$this->channel_info);
 
         return ApiService::success($result);
     }

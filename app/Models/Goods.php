@@ -22,25 +22,27 @@ class Goods extends Model
      * @param $page_size int 是 每页显示条数
      * @return mixed
      */
-    public static function getGoodsByPage($seller_id,$page,$page_size){
+    public static function getGoodsList($seller_id,$page,$page_size,$channel_info){
         $offset = ($page - 1) * $page_size;
 
-        $count = Db::table('products as p')->addSelect(['pg.product_id','pg.name','pg.quantity','pg.price'])
-            ->leftJoin('products_grid as pg','p.id','=','pg.product_id')
+        $count = Db::table('product_flat as pf')->leftJoin('products as p','pf.product_id','=','p.id')
             ->where([
-                ['pg.status','=',1],
+                ['pf.status','=',1],
                 ['p.seller_id','=',$seller_id],
-                ['p.parent_id','=',null]
+                ['pf.parent_id','=',null],
+                ['pf.locale','=',$channel_info['locale_code']],
+                ['pf.channel','=',$channel_info['channel_code']]
             ])->count();
-
         $total_page_sizes = ceil($count/$page_size);
 
-        $result = Db::table('products as p')->addSelect(['pg.product_id','pg.name','pg.quantity','pg.price'])
-            ->leftJoin('products_grid as pg','p.id','=','pg.product_id')
+        $result = Db::table('product_flat as pf')->addSelect(['pf.product_id','pf.name','pf.price'])
+            ->leftJoin('products as p','pf.product_id','=','p.id')
             ->where([
-                ['pg.status','=',1],
+                ['pf.status','=',1],
                 ['p.seller_id','=',$seller_id],
-                ['p.parent_id','=',null]
+                ['pf.parent_id','=',null],
+                ['pf.locale','=',$channel_info['locale_code']],
+                ['pf.channel','=',$channel_info['channel_code']]
             ])->offset($offset)->limit($page_size)->get();
 
         if(!empty($result)){
@@ -61,11 +63,11 @@ class Goods extends Model
      * @param string $locale string 是 本地化
      * @return array
      */
-    public static function getGoodsDetail($product_ids,$product_attribute_ids,$locale = 'zh-cn'){
+    public static function getGoodsDetail($product_ids,$product_attribute_ids,$channel_info){
         $result = self::getGoodsAttributes($product_attribute_ids);
         if(!empty($result)){
             //获取商品信息
-            $result_product = self::getGoodsByProductIds($product_ids,$locale);
+            $result_product = self::getGoodsByProductIds($product_ids,$channel_info);
             foreach($result_product as $k=>$v){
                 $product_info = $v;
                 unset($product_info['id']);
@@ -99,6 +101,30 @@ class Goods extends Model
         }
     }
 
+
+    /**
+     * 根据商品id获取默认显示的属性id
+     *
+     * @param $channel_info
+     * @param $product_id
+     * @return Model|\Illuminate\Database\Query\Builder|object|null
+     */
+    public static function getDefaultProductAttributeIdByProductId($channel_info,$product_id){
+        $locale_product_id = Db::table('product_flat')->where([
+            ['locale',$channel_info['locale_code']],
+            ['channel',$channel_info['channel_code']],
+            ['product_id',$product_id],
+        ])->value('id');
+
+
+        return Db::table('product_flat')->where([
+            ['locale',$channel_info['locale_code']],
+            ['channel',$channel_info['channel_code']],
+            ['parent_id',$locale_product_id],
+            ['status',1],
+        ])->orderBy('price','ASC')->value('id');
+    }
+
     /**
      * 根据上级id获取商品id
      * @param $parent_ids
@@ -129,10 +155,10 @@ class Goods extends Model
      * @param string $locale
      * @return array|\Illuminate\Support\Collection
      */
-    private static function getGoodsByProductIds($product_ids,$locale = 'zh-cn'){
+    private static function getGoodsByProductIds($product_ids,$channel_info){
         $result = Db::table('product_flat')->addSelect(['id','product_id','description','new','featured','visible_individually'])
             ->whereIn('product_id',$product_ids)
-            ->where('locale','=',$locale)->get();
+            ->where('locale','=',$channel_info['locale_code'])->get();
 
         if(!empty($result)){
             $result = object_to_array($result);
@@ -278,7 +304,7 @@ class Goods extends Model
      * @param $locale string 是 本地化
      * @return array|\Illuminate\Support\Collection
      */
-    public static function getGoodsCollection($seller_id,$customer_id,$page,$page_size,$locale='zh-cn'){
+    public static function getGoodsCollection($seller_id,$customer_id,$page,$page_size,$channel_info){
         $offset = ($page - 1) * $page_size;
 
         $count = Db::table('product_collection')
@@ -298,7 +324,7 @@ class Goods extends Model
             $result = object_to_array($result);
             $product_ids = array_unique(array_column($result,'product_id'));
             $product_attribute_ids = array_unique(array_column($result,'product_attribute_id'));
-            $product_detail = self::getGoodsDetail($product_ids,$product_attribute_ids,$locale);
+            $product_detail = self::getGoodsDetail($product_ids,$product_attribute_ids,$channel_info);
             if(!empty($product_detail)){
                 foreach($product_detail as $k=>$v){
                     $p_detail[$v['id']]['name'] = $v['name'];

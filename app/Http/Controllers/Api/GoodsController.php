@@ -32,10 +32,9 @@ class GoodsController extends Controller
      * @return {"name":"child_info","type":"dict","required":true,"desc":"商品信息","level":3}
      * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":4}
      * @return {"name":"name","type":"string","required":true,"desc":"商品名称","level":4}
-     * @return {"name":"quantity","type":"int","required":true,"desc":"商品数量","level":4}
      * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":4}
      * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":4}
-     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":4,"total_page_sizes":1,"result":[{"category_name":"男装","child_info":[{"product_id":22,"name":"秋冬棉衣","quantity":"0","price":"0","image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg"}]}]}}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":4,"total_page_sizes":1,"result":[{"category_name":"男装","child_info":[{"product_id":22,"name":"秋冬棉衣","price":"0","image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg"}]}]}}
      */
     public function goodsList(Request $request){
         //参数校验
@@ -62,7 +61,7 @@ class GoodsController extends Controller
         $page_size = empty($data['page_size']) ? 4: $data['page_size'];
 
         //获取商品列表
-        $result = Goods::getGoodsByPage($seller_id,$page,$page_size);
+        $result = Goods::getGoodsList($seller_id,$page,$page_size,$this->channel_info);
         if(!empty($result['result'])){
             $product_ids = array_column($result['result'],'product_id');
             //根据商品id获取商品图片
@@ -98,7 +97,6 @@ class GoodsController extends Controller
      * @title 商品详情
      * @desc  {"0":"接口地址：/api/goods/detail","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"product_id","type":"int","required":true,"desc":"商品id","level":1}
-     * @param {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":1}
      * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
      * @return {"name":"data","type":"","required":true,"desc":"","level":1}
      * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":2}
@@ -122,12 +120,9 @@ class GoodsController extends Controller
         $messages = [
             'product_id.required'            => 41002,
             'product_id.numeric'             => 42002,
-            'product_attribute_id.required'  => 41003,
-            'product_attribute_id.numeric'   => 42003,
         ];
         $validator = Validator::make($request->all(), [
             'product_id'           => 'required|numeric',
-            'product_attribute_id' => 'required|numeric',
         ],$messages);
 
         if ($validator->fails()) {
@@ -137,10 +132,10 @@ class GoodsController extends Controller
         //获取接收参数
         $data = $request->input();
         $product_id = $data['product_id'];
-        $product_attribute_id = $data['product_attribute_id'];
 
         //获取商品详情
-        $detail = Goods::getGoodsDetail([$product_id],[$product_attribute_id],'zh-cn');
+        $product_attribute_id = Goods::getDefaultProductAttributeIdByProductId($this->channel_info,$product_id);
+        $detail = Goods::getGoodsDetail([$product_id],[$product_attribute_id],$this->channel_info);
         unset($detail[0]['id']);
         unset($detail[0]['status']);
         unset($detail[0]['parent_id']);
@@ -205,7 +200,7 @@ class GoodsController extends Controller
         $page_size = empty($data['page_size']) ? 10: $data['page_size'];
 
         //获取收藏商品列表
-        $result = Goods::getGoodsCollection($data['seller_id'],$data['customer_id'],$page,$page_size,'zh-cn');
+        $result = Goods::getGoodsCollection($data['seller_id'],$data['customer_id'],$page,$page_size,$this->channel_info);
 
         return ApiService::success($result);
     }
