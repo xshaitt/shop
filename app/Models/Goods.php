@@ -383,4 +383,32 @@ class Goods extends Model
             'created_at'=>date("Y-m-d H:i:s")
         ]);
     }
+
+    /**
+     * 获取订单商品信息
+     *
+     * @author 邹柯
+     * @param $product array 是 商品信息
+     * @return array|\Illuminate\Support\Collection
+     */
+    public static function getOrderGoods($product){
+        $product_attribute_ids = array_unique(array_column($product,'product_attribute_id'));
+        //获取商品sku信息
+        $goods_sku_info = self::getGoodsAttributes($product_attribute_ids);
+        //根据上级id获取商品id
+        $goods_info = self::getProductIdByParentId(array_unique(array_column($goods_sku_info,'parent_id')));
+
+        //获取商品图片
+        $product_images = self::getGoodsImageByProductIds(array_values($goods_info));
+        foreach($product_images as $k=>$v){
+            $product_images[$k] = explode(",",$v)[0];
+        }
+
+        //组装数据
+        foreach($goods_sku_info as $k=>$v){
+            $goods_sku_info[$k]['image_path'] = $product_images[$goods_info[$v['parent_id']]];
+        }
+
+        return $goods_sku_info;
+    }
 }

@@ -90,33 +90,6 @@ class Order extends Model
     }
 
     /**
-     * 创建订单
-     *
-     * @author 邹柯
-     * @param $customer_id int 是 客户id
-     * @param $seller_id int 是 店铺id
-     * @param $order_id string 是 订单id
-     * @param $product array 是 商品信息
-     * @return bool
-     */
-    public static function createOrder($order_id,$seller_id,$customer_id,$address_id,$coupon_code,$cart_id,$product,$channel_info){
-        $goods_sku_info = self::getOrderGoods($product);
-        //获取收货地址信息
-        $address_info = Address::getAddressDetail($address_id);
-        //获取客户信息
-        $customer_info = User::getUser($customer_id);
-        //获取渠道信息
-//        $channel_info = Channel::getChannel();
-        //根据购物车id获取快递信息
-        $shipping_info = Cart::getShipping($cart_id);
-        //订单收货地址信息入库
-        self::addOrderAddress($address_info,$customer_info,$order_id,$customer_id);
-        //订单信息入库
-        self::addOrder($customer_info,$seller_id,$customer_id,$order_id,$coupon_code,$product,$channel_info,$shipping_info);
-        return $goods_sku_info;
-    }
-
-    /**
      * 订单入库
      *
      * @author 邹柯
@@ -124,15 +97,16 @@ class Order extends Model
      * @param $seller_id int 是 店铺id
      * @param $customer_id int 是 客户id
      * @param $order_id string 是 订单id
-     * @param $product array 商品信息
+     * @param $product array 是 商品信息
+     * @param $now_time datetime 是 入库时间
      * @return bool
      */
-    public static function addOrder($customer_info,$seller_id,$customer_id,$order_id,$coupon_code,$product,$channel_info,$shipping_info){
+    public static function addOrder($customer_info,$seller_id,$customer_id,$increment_id,$product,$channel_info,$now_time){
         $total_item_count = count(array_unique(array_column($product,'product_id')));
         $total_qty_ordered = array_sum(array_column($product,'qty_ordered'));
-        $time = date("y-m-d H:i:s");
-        return Db::table('orders')->insert([
-            'increment_id'=>$order_id,
+
+        return Db::table('orders')->insertGetId([
+            'increment_id'=>$increment_id,
             'status'=>1,
             'channel_id'=>$channel_info['id'],
             'channel_name'=>$channel_info['channel_name'],
@@ -141,48 +115,56 @@ class Order extends Model
             'customer_email'=>$customer_info['email'],
             'customer_first_name'=>$customer_info['first_name'],
             'customer_last_name'=>$customer_info['last_name'],
-            'shipping_method'=>$shipping_info['method'],
-            'shipping_title'=>$shipping_info['method_title'],
-            'shipping_description'=>$shipping_info['method_description'],
-            'coupon_code'=>$coupon_code,
+            'shipping_method'=>null,
+            'shipping_title'=>null,
+            'shipping_description'=>null,
+            'coupon_code'=>null,
             'is_gift'=>0,
             'total_item_count'=>$total_item_count,
             'total_qty_ordered'=>$total_qty_ordered,
             'base_currency_code'=>$channel_info['currency_code'],
             'customer_id'=>$customer_id,
-            'customer_type'=>$customer_info['type'],
-            'created_at'=>$time,
-            'updated_at'=>$time,
+            'customer_type'=>$customer_info['customer_type'],
+            'created_at'=>$now_time,
+            'updated_at'=>$now_time,
             'seller_id'=>$seller_id
         ]);
     }
 
     /**
-     * 获取订单商品信息
+     * 订单商品入库
      *
-     * @author 邹柯
-     * @param $product array 是 商品信息
-     * @return array|\Illuminate\Support\Collection
+     * @param $order_id int 是 订单id
+     * @param $goods_sku_info array 是 商品信息
+     * @param $product array
+     * @param $now_time datetime 是 创建时间
+     * @return bool
      */
-    private static function getOrderGoods($product){
-        $product_attribute_ids = array_unique(array_column($product,'product_attribute_id'));
-        //获取商品sku信息
-        $goods_sku_info = Goods::getGoodsAttributes($product_attribute_ids);
-        //根据上级id获取商品id
-        $goods_info = Goods::getProductIdByParentId(array_unique(array_column($goods_sku_info,'parent_id')));
-
-        //获取商品图片
-        $product_images = Goods::getGoodsImageByProductIds(array_values($goods_info));
-        foreach($product_images as $k=>$v){
-            $product_images[$k] = explode(",",$v)[0];
-        }
-
-        //组装数据
+    public static function addOrderItems($order_id,$goods_sku_info,$product,$now_time){
         foreach($goods_sku_info as $k=>$v){
-            $goods_sku_info[$k]['image_path'] = $product_images[$goods_info[$v['parent_id']]];
+            $g[$v['id']]['name'] = $v['name'];
+            $g[$v['id']]['price'] = $v['price'];
+            //$g[$v['id']]['parent_id'] = $v['parent_id'];
+        }
+        foreach($product as $k=>$v){
+            $product_attribute_name = $g[$v['product_attribute_id']]['name'];
+            $product_attribute_price = $g[$v['product_attribute_id']]['price'];
+            //$parent_id = $g[$v['product_attribute_id']]['parent_id'];
+            $total = $product_attribute_price * $v['qty_ordered'];
+            $order_items[] = [
+                'name'=>$product_attribute_name,
+                'qty_ordered'=>$v['qty_ordered'],
+                'price'=>$product_attribute_price,
+                'total'=>$total,
+                'product_id'=>$v['product_attribute_id'],
+                'order_id'=>$order_id,
+                'parent_id'=>null,
+                'created_at'=>$now_time,
+                'updated_at'=>$now_time,
+            ];
         }
 
-        return $goods_sku_info;
+        return Db::table('order_items')->insert($order_items);
     }
 
 
@@ -193,10 +175,10 @@ class Order extends Model
      * @param $address_info array 是 收货地址信息
      * @param $order_id string 是 订单id
      * @param $customer_id int 是 客户id
+     * @param $now_time datetime 是 入库时间
      * @return bool
      */
-    private static function addOrderAddress($address_info,$customer_info,$order_id,$customer_id){
-        $time = date("y-m-d H:i:s");
+    public static function addOrderAddress($address_info,$customer_info,$order_id,$customer_id,$now_time){
         //订单收货地址入库
         return Db::table('order_address')->insert([
             'first_name'=>$customer_info['first_name'],
@@ -212,8 +194,8 @@ class Order extends Model
             'address_type'=>"",
             'order_id'=>$order_id,
             'customer_id'=>$customer_id,
-            'created_at'=>$time,
-            'updated_at'=>$time
+            'created_at'=>$now_time,
+            'updated_at'=>$now_time
         ]);
     }
 
