@@ -20,6 +20,7 @@ Route::get('xsh', function () {
 Route::post('/user/register', 'Api\UserController@createUser');
 //商品
 Route::get('/goods/list', 'Api\GoodsController@goodsList');
+Route::get('/goods/more', 'Api\GoodsController@goodsMore');
 Route::get('/goods/detail', 'Api\GoodsController@goodsDetail');
 Route::get('/goods_collection/list', 'Api\GoodsController@goodsCollectionList');
 Route::get('/goods_collection/cancel', 'Api\GoodsController@cancelGoodsCollection');

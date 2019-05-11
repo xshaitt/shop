@@ -36,6 +36,7 @@ return [
             '41018' => 'product不能为空!',
             '41019' => 'qty_ordered不能为空!',
             '41020' => 'cart_id不能为空!',
+            '41021' => 'category_id不能为空!',
 
             '42001' => 'seller_id必须是整形!',
             '42002' => 'product_id必须是整形!',
@@ -52,6 +53,7 @@ return [
             '42013' => 'product必须是json!',
             '42014' => 'qty_ordered必须是整数!',
             '42015' => 'cart_id必须是整数!',
+            '42016' => 'category_id必须是整数!',
         ]
     ]
 ];

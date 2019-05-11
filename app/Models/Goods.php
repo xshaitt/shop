@@ -294,6 +294,31 @@ class Goods extends Model
         return $result;
     }
 
+    /**
+     * 根据分类id获取商品信息
+     *
+     * @param $category_id
+     * @return array|\Illuminate\Support\Collection
+     */
+    public static function getMoreGoodsByCategoryId($category_id){
+        $result = DB::table('categories as c')->addSelect([DB::raw('group_concat(pc.product_id) as product_ids'),'c.id as category_id','ct.name as category_name'])
+            ->leftJoin('category_translations as ct','c.id','=','ct.id')
+            ->leftJoin('product_categories as pc','c.id','=','pc.category_id')
+            ->leftJoin('products_grid as pg','pc.product_id','=','pg.product_id')
+            ->where([
+                ['pg.status',1],
+                ['c.id',$category_id],
+            ])->get();
+
+        if(!empty($result)){
+            $result = object_to_array($result);
+        }else{
+            return [];
+        }
+
+        return $result;
+    }
+
 
     /**
      * 获取商品收藏列表

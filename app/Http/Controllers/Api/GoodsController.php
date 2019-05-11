@@ -17,7 +17,7 @@ class GoodsController extends Controller
 {
 
     /**
-     * @title 商品列表
+     * @title 首页分类商品列表
      * @desc  {"0":"接口地址：/api/goods/list","1":"请求方式：GET","2":"开发者: 邹柯"}
      * @param {"name":"seller_id","type":"int","required":true,"desc":"店铺id","level":1}
      * @param {"name":"limit","type":"int","required":false,"desc":"分类下显示的商品数,不传默认4","level":1}
@@ -30,7 +30,7 @@ class GoodsController extends Controller
      * @return {"name":"name","type":"string","required":true,"desc":"商品名称","level":3}
      * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":3}
      * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":3}
-     * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":4,"total_page_sizes":1,"result":[{"category_name":"男装","child_info":[{"product_id":22,"name":"秋冬棉衣","price":"0","image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg"}]}]}}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":[{"category_id":8,"category_name":"男装","child_info":[{"name":"秋冬棉衣","price":"101.0000","product_id":22,"image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg"},{"name":"测试商品","price":"200.0000","product_id":131,"image_paths":null}]},{"category_id":9,"category_name":"手机","child_info":[{"name":"小米2s","price":"256.0000","product_id":168,"image_paths":"product/168/bJc5RF0xuP7Xd88R0JIzXpHQlrDnnU9IkFLKFwQx.jpeg"}]}]}
      */
     public function goodsList(Request $request){
         //参数校验
@@ -55,6 +55,74 @@ class GoodsController extends Controller
 
         //根据店铺id获取店铺下商品的分类信息
         $category_info = Goods::getGoodsCategoryBySellerId($seller_id,$limit);
+        if(!empty($category_info)){
+            $product_ids =explode(",",implode(",",array_column($category_info,'product_ids')));
+            //获取商品列表
+            $product_list = Goods::getGoodsByProductIds($product_ids,$this->channel_info);
+            //根据商品id获取商品图片
+            $product_image = Goods::getGoodsImageByProductIds($product_ids);
+            foreach($product_list as $k=>$v){
+                unset($product_list[$k]['description']);
+                unset($product_list[$k]['featured']);
+                unset($product_list[$k]['new']);
+                unset($product_list[$k]['visible_individually']);
+                unset($product_list[$k]['id']);
+
+                $image_paths = isset($product_image[$v['product_id']])? $product_image[$v['product_id']] : null;
+                if(!empty($image_paths)){
+                    $image_path = explode(",",$image_paths)[0];
+                }else{
+                    $image_path = null;
+                }
+                $product_list[$k]['image_paths'] = $image_path;
+            }
+
+            foreach($category_info as $k=>$v){
+                $category_info[$k]['child_info'] = array_values(array_filter($product_list, function($t) use ($v) {
+                    return in_array($t['product_id'],explode(",",$v['product_ids']));
+                }));
+                unset($category_info[$k]['product_ids']);
+            }
+        }
+
+        return ApiService::success($category_info);
+    }
+
+    /**
+     * @title 获取分类下更多商品
+     * @desc  {"0":"接口地址：/api/goods/more","1":"请求方式：GET","2":"开发者: 邹柯"}
+     * @param {"name":"category_id","type":"int","required":true,"desc":"分类id","level":1}
+     * @return {"name":"code","type":"int","required":true,"desc":"返回码：0成功,-1失败","level":1}
+     * @return {"name":"data","type":"","required":true,"desc":"","level":1}
+     * @return {"name":"category_id","type":"int","required":true,"desc":"分类id","level":2}
+     * @return {"name":"category_name","type":"string","required":true,"desc":"分类名称","level":2}
+     * @return {"name":"child_info","type":"","required":true,"desc":"商品信息","level":2}
+     * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":3}
+     * @return {"name":"name","type":"string","required":true,"desc":"商品名称","level":3}
+     * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":3}
+     * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":3}
+     * @example {"code":0,"errCode":200,"message":"加载成功","data":[{"category_id":8,"category_name":"男装","child_info":[{"name":"秋冬棉衣","price":"101.0000","product_id":22,"image_paths":"product/22/AgeQ5CDyidcL5P5LDqyD1V5nQ5Zms9y67vP7Hk2t.jpeg"},{"name":"测试商品","price":"200.0000","product_id":131,"image_paths":null}]}]}
+     */
+    public function goodsMore(Request $request){
+        //参数校验
+        $messages = [
+            'category_id.required'  => 41021,
+            'category_id.numeric'   => 42016,
+        ];
+        $validator = Validator::make($request->all(), [
+            'category_id' => 'bail|required|numeric',
+        ],$messages);
+
+        if ($validator->fails()) {
+            return ApiService::error($validator->errors()->first());
+        }
+
+        //获取接收参数
+        $data = $request->input();
+        $category_id = $data['category_id'];
+
+        //根据分类id获取该分类下商品信息
+        $category_info = Goods::getMoreGoodsByCategoryId($category_id);
         if(!empty($category_info)){
             $product_ids =explode(",",implode(",",array_column($category_info,'product_ids')));
             //获取商品列表
