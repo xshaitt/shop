@@ -1,9 +1,8 @@
 <?php
-namespace App\Models;
+namespace App\Http\Service;
 
-use App\Http\Service\ReflectionService;
 
-class Doc
+class DocService
 {
     public function __construct($item = null)
     {

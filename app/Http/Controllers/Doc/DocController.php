@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\Doc;
 
 use App\Http\Controllers\Controller;
-use App\Models\doc;
-use Illuminate\Support\Facades\DB;
+use App\Http\Service\DocService;
 
 
 /**
@@ -57,7 +56,7 @@ class DocController extends Controller
      */
     public function documents()
     {
-        $documents = new Doc($this->item);
+        $documents = new DocService($this->item);
         $list = $documents->getApiDocuments();
 
         return view('doc.doc.documents', compact('list'));
@@ -69,7 +68,7 @@ class DocController extends Controller
      * @auth 邹柯
      */
     public function apiDebug(){
-        $documents = new Doc($this->item);
+        $documents = new DocService($this->item);
         $result = $documents->getApiDocuments();
 
         foreach($result as $k=>$v){
