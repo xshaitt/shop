@@ -33,14 +33,16 @@ class OrderController extends Controller
      * @return {"name":"page","type":"int","required":true,"desc":"页码","level":2}
      * @return {"name":"page_size","type":"int","required":true,"desc":"每页显示条数","level":2}
      * @return {"name":"total_page_sizes","type":"int","required":true,"desc":"总页数","level":2}
-     * @return {"name":"result","type":"dict","required":true,"desc":"商品及分类信息","level":2}
-     * @return {"name":"category_name","type":"string","required":true,"desc":"分类名称","level":3}
-     * @return {"name":"child_info","type":"dict","required":true,"desc":"商品信息","level":3}
-     * @return {"name":"product_id","type":"int","required":true,"desc":"商品id","level":4}
+     * @return {"name":"result","type":"","required":true,"desc":"订单商品信息","level":2}
+     * @return {"name":"id","type":"int","required":true,"desc":"订单id","level":3}
+     * @return {"name":"increment_id","type":"string","required":true,"desc":"订单号","level":3}
+     * @return {"name":"total_qty_ordered","type":"int","required":true,"desc":"商品总数","level":3}
+     * @return {"name":"base_grand_total","type":"string","required":true,"desc":"订单金额","level":3}
+     * @return {"name":"order_goods","type":"","required":true,"desc":"商品信息","level":3}
      * @return {"name":"name","type":"string","required":true,"desc":"商品名称","level":4}
-     * @return {"name":"quantity","type":"int","required":true,"desc":"商品数量","level":4}
-     * @return {"name":"price","type":"string","required":true,"desc":"商品价格","level":4}
-     * @return {"name":"image_paths","type":"string","required":false,"desc":"商品图片","level":4}
+     * @return {"name":"base_price","type":"float","required":true,"desc":"商品价格","level":4}
+     * @return {"name":"product_attribute_id","type":"int","required":true,"desc":"商品属性id","level":4}
+     * @return {"name":"thumbnail","type":"string","required":true,"desc":"商品图片","level":4}
      * @example {"code":0,"errCode":200,"message":"加载成功","data":{"page":1,"page_size":4,"total_page_sizes":11,"result":[{"id":107,"increment_id":"20190510162934101579","total_qty_ordered":4,"base_grand_total":"500.0000","order_goods":[{"name":"秋冬棉衣1","base_price":"200.0000","product_attribute_id":46,"thumbnail":null},{"name":"秋冬棉衣2","base_price":"100.0000","product_attribute_id":48,"thumbnail":null}]}]}}
      */
     public function orderList(Request $request){
