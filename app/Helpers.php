@@ -75,9 +75,10 @@ function object_to_array($object){
  * @author 邹柯
  * @param $group_field string 分组字段
  * @param $data array 要分组的二维数组
+ * @param $additional array 分组额外显示字段
  * @return array
  */
-function array_to_group($group_field,$data){
+function array_to_group($group_field,$data,$additional){
     //按分类进行分组
     foreach($data as $k=>$v){
         $group_name = $v[$group_field];

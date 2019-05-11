@@ -147,17 +147,16 @@ class Goods extends Model
 
 
     /**
-     * 根据商品id获取商品的其他信息
+     * 根据商品id列表获取商品信息
      *
-     * @param $product_ids string 是 商品id列表
-     * @param string $locale
+     * @param $product_ids string 是 商品id列表,多个商品id之间用,号分隔开
+     * @param array $channel_info 是 渠道信息
      * @return array|\Illuminate\Support\Collection
      */
-    private static function getGoodsByProductIds($product_ids,$channel_info){
-        $result = Db::table('product_flat')->addSelect(['id','product_id','description','new','featured','visible_individually'])
+    public static function getGoodsByProductIds($product_ids,$channel_info){
+        $result = Db::table('product_flat')->addSelect(['id','name','price','product_id','description','new','featured','visible_individually'])
             ->whereIn('product_id',$product_ids)
             ->where('locale','=',$channel_info['locale_code'])->get();
-
         if(!empty($result)){
             $result = object_to_array($result);
         }else{
@@ -196,7 +195,7 @@ class Goods extends Model
         //本地化商品id
         $locate_product_id = self::getGoodsLocaleSkuId($product_id,$locale);
 
-        $result = Db::table('product_flat')->addSelect(['id as product_attribute_id','status','name as goods_name',DB::raw('concat_ws(" ",concat("颜色:",color_label),concat("尺码:",size_label)) as attributes'),'price'])
+        $result = Db::table('product_flat')->addSelect(['id as product_attribute_id','thumbnail','status','name as goods_name',DB::raw('concat_ws(" ",concat("颜色:",color_label),concat("尺码:",size_label)) as attributes'),'price'])
             ->where([
                 ['parent_id','=',$locate_product_id],
             ])->get();
@@ -261,21 +260,26 @@ class Goods extends Model
 
 
     /**
-     * 根据商品id获取商品的分类
+     * 根据店铺id获取店铺下商品的分类信息
      *
-     * @param $product_ids array 是 商品id
+     * @param $seller_id int 是 店铺id
      * @return mixed
      */
-    public static function getGoodsCategoryByProductIds($product_ids){
+    public static function getGoodsCategoryBySellerId($seller_id){
         //打印sql
         //DB::connection()->enableQueryLog();
-        $result = Db::table('product_categories as pc')->addSelect(['ct.name','pc.product_id','pc.category_id'])
-            ->leftJoin('category_translations as ct','pc.category_id','=','ct.id')
-            ->whereIn('pc.product_id',$product_ids)
+        $result = DB::table('categories as c')->addSelect([DB::raw('group_concat(pc.product_id) as product_ids'),'c.id as category_id','ct.name as category_name'])
+            ->leftJoin('category_translations as ct','c.id','=','ct.id')
+            ->leftJoin('product_categories as pc','c.id','=','pc.category_id')
+            ->leftJoin('products_grid as pg','pc.product_id','=','pg.product_id')
+            ->where([
+                ['pg.status',1],
+                ['c.seller_id',$seller_id],
+            ])
+            ->groupBy('c.id')
             ->get();
         //$log = DB::getQueryLog();
         //var_dump($log);
-
         if(!empty($result)){
             $result = object_to_array($result);
         }else{
