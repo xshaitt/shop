@@ -263,9 +263,10 @@ class Goods extends Model
      * 根据店铺id获取店铺下商品的分类信息
      *
      * @param $seller_id int 是 店铺id
+     * @param $limit int 是 记录数
      * @return mixed
      */
-    public static function getGoodsCategoryBySellerId($seller_id){
+    public static function getGoodsCategoryBySellerId($seller_id,$limit = 4){
         //打印sql
         //DB::connection()->enableQueryLog();
         $result = DB::table('categories as c')->addSelect([DB::raw('group_concat(pc.product_id) as product_ids'),'c.id as category_id','ct.name as category_name'])
@@ -282,6 +283,10 @@ class Goods extends Model
         //var_dump($log);
         if(!empty($result)){
             $result = object_to_array($result);
+            foreach($result as $k=>$v){
+                //获取分组内的前$limit条记录
+                $result[$k]['product_ids'] = implode(",",array_slice(explode(",",$v['product_ids']),0,$limit));
+            }
         }else{
             return [];
         }

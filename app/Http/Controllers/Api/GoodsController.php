@@ -54,7 +54,7 @@ class GoodsController extends Controller
         $limit = empty($data['limit']) ? 4: $data['limit'];
 
         //根据店铺id获取店铺下商品的分类信息
-        $category_info = Goods::getGoodsCategoryBySellerId($seller_id);
+        $category_info = Goods::getGoodsCategoryBySellerId($seller_id,$limit);
         if(!empty($category_info)){
             $product_ids =explode(",",implode(",",array_column($category_info,'product_ids')));
             //获取商品列表
