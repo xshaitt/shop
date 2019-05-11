@@ -78,7 +78,7 @@ function object_to_array($object){
  * @param $additional array 分组额外显示字段
  * @return array
  */
-function array_to_group($group_field,$data,$additional){
+function array_to_group($group_field,$data){
     //按分类进行分组
     foreach($data as $k=>$v){
         $group_name = $v[$group_field];
@@ -106,17 +106,6 @@ function createOrderNo() {
     return date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 6);
 }
 
-
-/**
- * 判断是否是json
- *
- * @author 邹柯
- * @param $str
- * @return bool
- */
-function is_not_json($str){
-    return is_null(json_decode($str));
-}
 
 /**
  * 隐藏电话号码/手机号码中间4位
