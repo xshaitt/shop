@@ -33,21 +33,6 @@ class DocController extends Controller
                 exit;
             }
         }
-
-        if($this->action == 'apiDevDocuments') {
-            if(empty($this->item)){
-                header("Location: ?item=1");
-                exit;
-            }else{
-                if(empty($this->sidebar_nav)){
-                    $info = $this->db->table('md_documents')->select('document_id')->where([
-                        ['book_id','=',$this->item],['order_sort','=',0]
-                    ])->first()->toArray();
-                    header("Location: ?item=".$this->item."&sidebar_nav=".$info['document_id']);
-                    exit;
-                }
-            }
-        }
     }
 
     /**
