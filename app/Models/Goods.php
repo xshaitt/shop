@@ -145,6 +145,13 @@ class Goods extends Model
         return $res;
     }
 
+    /**
+     * 根据本地化的商品属性id获取商品属性id
+     */
+    public static function getProductIdByProductAttributeId($product_attribute_id){
+        return Db::table('product_flat')->where('id',$product_attribute_id)->value('product_id');
+    }
+
 
     /**
      * 根据商品id列表获取商品信息

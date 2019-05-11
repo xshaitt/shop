@@ -18,6 +18,8 @@ Route::get('xsh', function () {
 });
 
 Route::post('/user/register', 'Api\UserController@createUser');
+//首页
+Route::get('/sliders/list', 'Api\IndexController@slidersList');
 //商品
 Route::get('/goods/list', 'Api\GoodsController@goodsList');
 Route::get('/goods/more', 'Api\GoodsController@goodsMore');
@@ -25,6 +27,12 @@ Route::get('/goods/detail', 'Api\GoodsController@goodsDetail');
 Route::get('/goods_collection/list', 'Api\GoodsController@goodsCollectionList');
 Route::get('/goods_collection/cancel', 'Api\GoodsController@cancelGoodsCollection');
 Route::post('/goods_collection/add', 'Api\GoodsController@addGoodsCollection');
+//购物车
+Route::post('/cart/add', 'Api\CartController@addCart');
+Route::get('/cart/up', 'Api\CartController@upCart');
+Route::get('/cart/down', 'Api\CartController@downCart');
+Route::get('/cart/del', 'Api\CartController@delCart');
+Route::get('/cart/list', 'Api\CartController@cartList');
 //收货地址
 Route::get('/address/list', 'Api\AddressController@addressList');
 Route::get('/address/detail', 'Api\AddressController@addressDetail');
